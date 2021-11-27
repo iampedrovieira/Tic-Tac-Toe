@@ -1,18 +1,21 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { MouseEventHandler, useState } from 'react'
+import { MouseEventHandler, useEffect, useState } from 'react'
 import styles from '../styles/Home.module.css'
-
-type Position =`${number| ''}${number}x${number}`
+import { connect } from "http2";
+import { io, Socket } from "socket.io-client";
 
 
 interface Player{
-  Id:Number,
-  Name:String,
+  Id?:String,
+  Name?:String,
   Option:Number
 }
 
 interface Game{
+  'Player1':Player,
+  'Player2':Player,
+  'Play':String
   '1x1':Number,
   '1x2':Number,
   '1x3':Number,
@@ -24,40 +27,63 @@ interface Game{
   '3x3':Number
 }
 
+interface ButtonConfig{
+  'styles':string,
+  'disable':boolean
+}
 interface ButtonState{
-  '1x1':string,
-  '1x2':string,
-  '1x3':string,
-  '2x1':string,
-  '2x2':string,
-  '2x3':string,
-  '3x1':string,
-  '3x2':string,
-  '3x3':string
+  '1x1':ButtonConfig,
+  '1x2':ButtonConfig,
+  '1x3':ButtonConfig,
+  '2x1':ButtonConfig,
+  '2x2':ButtonConfig,
+  '2x3':ButtonConfig,
+  '3x1':ButtonConfig,
+  '3x2':ButtonConfig,
+  '3x3':ButtonConfig
 }
 
 const Home: NextPage = () => {
   
   const [player_1,setPlayer_1] = useState<Player>();
   const [player_2,setPlayer_2] = useState<Player>();
+  const [playerId,setPlayerId] = useState<String>();
+  const [disabledButtons,setDisabledButtons] = useState<boolean>(true);
   const [Game,setGame] = useState<Game>();
   const [buttonsState,setButtonsState]=useState<ButtonState>(
   {
-    '1x1':styles.button,
-    '1x2':styles.button,
-    '1x3':styles.button,
-    '2x1':styles.button,
-    '2x2':styles.button,
-    '2x3':styles.button,
-    '3x1':styles.button,
-    '3x2':styles.button,
-    '3x3':styles.button
+    '1x1':{'styles':styles.button,'disable':false},
+    '1x2':{'styles':styles.button,'disable':false},
+    '1x3':{'styles':styles.button,'disable':false},
+    '2x1':{'styles':styles.button,'disable':false},
+    '2x2':{'styles':styles.button,'disable':false},
+    '2x3':{'styles':styles.button,'disable':false},
+    '3x1':{'styles':styles.button,'disable':false},
+    '3x2':{'styles':styles.button,'disable':false},
+    '3x3':{'styles':styles.button,'disable':false}
   });
 
-  function handleButton(position:keyof ButtonState):void{
+  useEffect(() => {
     
+    const socket = io("http://localhost:8080");
+
+    socket.on("connect", () => {
+        console.log("Connectou")
+    })
+    socket.on("data",(data)=>{
+      console.log(data)
+    })
+    socket.on("disconect", () => {
+      alert('Conexão falhou')
+  })
+
+  },[0]);
+
+  function handleButton(position:keyof ButtonState):void{
+    if(!buttonsState[position].disable) return;
     let newButtonState:ButtonState = Object.assign({}, buttonsState);
-    newButtonState[position]=styles.player1;
+    newButtonState[position].styles=styles.player1;
+    newButtonState[position].disable=true;
     setButtonsState(newButtonState);
   
   }
@@ -71,19 +97,19 @@ const Home: NextPage = () => {
       </Head>
       <div className={styles.game}>
         <div className={styles.line}>
-          <button className={buttonsState['1x1']} onClick={()=>handleButton('1x1')} ></button>
-          <button className={buttonsState['1x2']} onClick={()=>handleButton('1x2')} ></button>
-          <button className={buttonsState['1x3']} onClick={()=>handleButton('1x3')}></button>
+          <button disabled={buttonsState['1x1'].disable} className={buttonsState['1x1'].styles} onClick={()=>handleButton('1x1')} ></button>
+          <button disabled={buttonsState['1x2'].disable} className={buttonsState['1x2'].styles} onClick={()=>handleButton('1x2')} ></button>
+          <button disabled={buttonsState['1x3'].disable} className={buttonsState['1x3'].styles} onClick={()=>handleButton('1x3')}></button>
         </div>
         <div className={styles.line}>
-          <button className={buttonsState['2x1']} onClick={()=>handleButton('2x1')}></button>
-          <button className={buttonsState['2x2']} onClick={()=>handleButton('2x2')}></button>
-          <button className={buttonsState['2x3']} onClick={()=>handleButton('2x3')}></button>
+          <button disabled={buttonsState['2x1'].disable} className={buttonsState['2x1'].styles} onClick={()=>handleButton('2x1')}></button>
+          <button disabled={buttonsState['2x2'].disable} className={buttonsState['2x2'].styles} onClick={()=>handleButton('2x2')}></button>
+          <button disabled={buttonsState['2x3'].disable} className={buttonsState['2x3'].styles} onClick={()=>handleButton('2x3')}></button>
         </div>
         <div className={styles.line}>
-          <button className={buttonsState['3x1']} onClick={()=>handleButton('3x1')}></button>
-          <button className={buttonsState['3x2']} onClick={()=>handleButton('3x2')}></button>
-          <button className={buttonsState['3x3']} onClick={()=>handleButton('3x3')}></button>
+          <button disabled={buttonsState['3x1'].disable} className={buttonsState['3x1'].styles} onClick={()=>handleButton('3x1')}></button>
+          <button disabled={buttonsState['3x2'].disable} className={buttonsState['3x3'].styles} onClick={()=>handleButton('3x2')}></button>
+          <button disabled={buttonsState['3x3'].disable} className={buttonsState['3x3'].styles} onClick={()=>handleButton('3x3')}></button>
         </div>
       </div>
     </div>

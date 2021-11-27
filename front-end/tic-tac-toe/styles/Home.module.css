@@ -13,6 +13,10 @@
     flex-wrap: wrap;
 }
 
+.button:disabled{
+  width: 10rem;
+  height: 10rem;
+}
 .button{
   width: 10rem;
   height: 10rem;
