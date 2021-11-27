@@ -1,6 +1,18 @@
 import { Socket } from "socket.io";
+const express = require( "express" );
+const cors = require('cors')
+const app = express();
+const port = 8080;
 
-const io = require("socket.io")(8080);
+//app.use(cors);
+
+const server = app.listen(port);
+
+const io = require("socket.io")(server, {cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"]
+    }});
+
 var totalPlayers = 0;
 
 interface Player{
