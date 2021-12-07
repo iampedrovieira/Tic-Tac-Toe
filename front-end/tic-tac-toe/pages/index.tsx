@@ -1,9 +1,9 @@
-import type { NextPage } from 'next'
+import type { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next'
 import Head from 'next/head'
 import { MouseEventHandler, useEffect, useState } from 'react'
 import styles from '../styles/Home.module.css'
-import { connect } from "http2";
-import { io, Socket } from "socket.io-client";
+import { io, Socket} from "socket.io-client";
+import { loadGetInitialProps } from 'next/dist/shared/lib/utils';
 
 
 interface Player{
@@ -15,7 +15,7 @@ interface Player{
 interface Game{
   'Player1':Player,
   'Player2':Player,
-  'Play':String
+  'Play':string
   '1x1':Number,
   '1x2':Number,
   '1x3':Number,
@@ -43,13 +43,22 @@ interface ButtonState{
   '3x3':ButtonConfig
 }
 
+interface InitalProps{
+  socket:Socket,
+  userId:string,
+  status:boolean
+}
+
 const Home: NextPage = () => {
   
   const [player_1,setPlayer_1] = useState<Player>();
   const [player_2,setPlayer_2] = useState<Player>();
   const [playerId,setPlayerId] = useState<String>();
   const [disabledButtons,setDisabledButtons] = useState<boolean>(true);
-  const [Game,setGame] = useState<Game>();
+  const [game,setGame] = useState<Game>();
+  const [message,setMessage] = useState<string>('Connecting to server');
+  const [socket,setSocket] = useState<Socket|null>(null);
+
   const [buttonsState,setButtonsState]=useState<ButtonState>(
   {
     '1x1':{'styles':styles.button,'disable':false},
@@ -62,25 +71,60 @@ const Home: NextPage = () => {
     '3x2':{'styles':styles.button,'disable':false},
     '3x3':{'styles':styles.button,'disable':false}
   });
-
+  
+  //On first run
   useEffect(() => {
-    
-    const socket = io("http://localhost:8080");
+    const socket:Socket = io("http://localhost:8080");
+    socket.on("connect", async () => {
+      console.log("Connectou");
+      socket.on("yourId",(userId)=>{
+        setPlayerId(userId);
+        setMessage('Waitting for player!');
+        setSocket(socket)
+        return;
+      })
+  });
+  setMessage('Connecting...');
+  },[]);
 
-    socket.on("connect", () => {
-        console.log("Connectou")
+  //This is run when player id changed
+  useEffect(() => {
+    //This create a listenr to startGame entry.
+    if(!socket)return;
+  
+    socket!.on("startGame",(data:Game)=>{
+      console.log('game started')
+      //Set data into gameState
+      setGame(data);
+      
+      //Verify if the user
+      if(data.Play!=playerId){
+        setMessage("It's your time to play");
+        
+        //Block the buttons when exist in data
+        
+      }else{
+        //Block all buttons
+        setButtonsState({
+          '1x1':{'styles':styles.button,'disable':true},
+          '1x2':{'styles':styles.button,'disable':true},
+          '1x3':{'styles':styles.button,'disable':true},
+          '2x1':{'styles':styles.button,'disable':true},
+          '2x2':{'styles':styles.button,'disable':true},
+          '2x3':{'styles':styles.button,'disable':true},
+          '3x1':{'styles':styles.button,'disable':true},
+          '3x2':{'styles':styles.button,'disable':true},
+          '3x3':{'styles':styles.button,'disable':true}
+        })
+        setMessage("Wait for other player move");
+      }
     })
-    socket.on("data",(data)=>{
-      console.log(data)
-    })
-    socket.on("disconect", () => {
-      alert('Conexão falhou')
-  })
+  },[socket]);
 
-  },[0]);
+
 
   function handleButton(position:keyof ButtonState):void{
-    if(!buttonsState[position].disable) return;
+    if(buttonsState[position].disable) return;
     let newButtonState:ButtonState = Object.assign({}, buttonsState);
     newButtonState[position].styles=styles.player1;
     newButtonState[position].disable=true;
@@ -112,8 +156,17 @@ const Home: NextPage = () => {
           <button disabled={buttonsState['3x3'].disable} className={buttonsState['3x3'].styles} onClick={()=>handleButton('3x3')}></button>
         </div>
       </div>
+      <h1>{message}</h1>
     </div>
   )
 }
 
-export default Home
+// This gets called on every request
+
+export const getStaticProps = async () => {
+  return {props:{
+  } 
+  } 
+}
+
+export default Home;
