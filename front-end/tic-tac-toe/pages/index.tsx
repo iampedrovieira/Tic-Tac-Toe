@@ -3,45 +3,32 @@ import Head from 'next/head'
 import { MouseEventHandler, useEffect, useState } from 'react'
 import styles from '../styles/Home.module.css'
 import { io, Socket} from "socket.io-client";
-import { loadGetInitialProps } from 'next/dist/shared/lib/utils';
+
 
 
 interface Player{
   Id?:String,
   Name?:String,
-  Option:Number
+  Option:Number,
+  wins:number;
+  losses:number;
 }
 
 interface Game{
   'Player1':Player,
   'Player2':Player,
   'Play':string
-  '1x1':Number,
-  '1x2':Number,
-  '1x3':Number,
-  '2x1':Number,
-  '2x2':Number,
-  '2x3':Number,
-  '3x1':Number,
-  '3x2':Number,
-  '3x3':Number
+  'gameState':number[][];
 }
-
+interface Move{
+  positionX:number,
+  positionY:number
+}
 interface ButtonConfig{
   'styles':string,
   'disable':boolean
 }
-interface ButtonState{
-  '1x1':ButtonConfig,
-  '1x2':ButtonConfig,
-  '1x3':ButtonConfig,
-  '2x1':ButtonConfig,
-  '2x2':ButtonConfig,
-  '2x3':ButtonConfig,
-  '3x1':ButtonConfig,
-  '3x2':ButtonConfig,
-  '3x3':ButtonConfig
-}
+
 
 interface InitalProps{
   socket:Socket,
@@ -59,18 +46,12 @@ const Home: NextPage = () => {
   const [message,setMessage] = useState<string>('Connecting to server');
   const [socket,setSocket] = useState<Socket|null>(null);
 
-  const [buttonsState,setButtonsState]=useState<ButtonState>(
-  {
-    '1x1':{'styles':styles.button,'disable':false},
-    '1x2':{'styles':styles.button,'disable':false},
-    '1x3':{'styles':styles.button,'disable':false},
-    '2x1':{'styles':styles.button,'disable':false},
-    '2x2':{'styles':styles.button,'disable':false},
-    '2x3':{'styles':styles.button,'disable':false},
-    '3x1':{'styles':styles.button,'disable':false},
-    '3x2':{'styles':styles.button,'disable':false},
-    '3x3':{'styles':styles.button,'disable':false}
-  });
+  const [buttonsState,setButtonsState]=useState<ButtonConfig[][]>(
+    [
+      [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}],
+      [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}],
+      [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}]
+    ]);
   
   //On first run
   useEffect(() => {
@@ -91,44 +72,56 @@ const Home: NextPage = () => {
   useEffect(() => {
     //This create a listenr to startGame entry.
     if(!socket)return;
-  
-    socket!.on("startGame",(data:Game)=>{
-      console.log('game started')
+
+    socket.on("startGame",(data:Game)=>{
       //Set data into gameState
       setGame(data);
-      
       //Verify if the user
       if(data.Play!=playerId){
         setMessage("It's your time to play");
         
         //Block the buttons when exist in data
-        
+
       }else{
         //Block all buttons
-        setButtonsState({
-          '1x1':{'styles':styles.button,'disable':true},
-          '1x2':{'styles':styles.button,'disable':true},
-          '1x3':{'styles':styles.button,'disable':true},
-          '2x1':{'styles':styles.button,'disable':true},
-          '2x2':{'styles':styles.button,'disable':true},
-          '2x3':{'styles':styles.button,'disable':true},
-          '3x1':{'styles':styles.button,'disable':true},
-          '3x2':{'styles':styles.button,'disable':true},
-          '3x3':{'styles':styles.button,'disable':true}
-        })
+        setButtonsState(
+          [
+            [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}],
+            [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}],
+            [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}]
+          ])
         setMessage("Wait for other player move");
       }
     })
+
+    
+    // Finish Listener
+    socket.on("finish",(winner:string)=>{
+
+      // * [TEMP] Dá restart ao jogo
+      // TODO Falta atualzar o gameState
+      setButtonsState(
+        [
+          [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}],
+          [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}],
+          [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}]
+        ]);
+    });
+  
   },[socket]);
 
-
-
-  function handleButton(position:keyof ButtonState):void{
-    if(buttonsState[position].disable) return;
-    let newButtonState:ButtonState = Object.assign({}, buttonsState);
-    newButtonState[position].styles=styles.player1;
-    newButtonState[position].disable=true;
+  function handleButton(positionX:number,positionY:number):void{
+    if(buttonsState[positionX][positionY].disable) return;
+    let newButtonState = buttonsState;
+    if(player_1?.Option==0)newButtonState[positionX][positionY].styles=styles.player1;
+    if(player_1?.Option==1)newButtonState[positionX][positionY].styles=styles.player1;
+    newButtonState[positionX][positionY].disable=true;
     setButtonsState(newButtonState);
+    
+    // TODO Change gameState
+
+    const move:Move ={positionX,positionY}
+    socket?.emit('playerMove',socket,move);
   
   }
 
@@ -141,19 +134,19 @@ const Home: NextPage = () => {
       </Head>
       <div className={styles.game}>
         <div className={styles.line}>
-          <button disabled={buttonsState['1x1'].disable} className={buttonsState['1x1'].styles} onClick={()=>handleButton('1x1')} ></button>
-          <button disabled={buttonsState['1x2'].disable} className={buttonsState['1x2'].styles} onClick={()=>handleButton('1x2')} ></button>
-          <button disabled={buttonsState['1x3'].disable} className={buttonsState['1x3'].styles} onClick={()=>handleButton('1x3')}></button>
+          <button disabled={buttonsState[0][0].disable} className={buttonsState[0][0].styles} onClick={()=>handleButton(0,0)} ></button>
+          <button disabled={buttonsState[0][1].disable} className={buttonsState[0][1].styles} onClick={()=>handleButton(0,1)} ></button>
+          <button disabled={buttonsState[0][2].disable} className={buttonsState[0][2].styles} onClick={()=>handleButton(0,2)}></button>
         </div>
         <div className={styles.line}>
-          <button disabled={buttonsState['2x1'].disable} className={buttonsState['2x1'].styles} onClick={()=>handleButton('2x1')}></button>
-          <button disabled={buttonsState['2x2'].disable} className={buttonsState['2x2'].styles} onClick={()=>handleButton('2x2')}></button>
-          <button disabled={buttonsState['2x3'].disable} className={buttonsState['2x3'].styles} onClick={()=>handleButton('2x3')}></button>
+          <button disabled={buttonsState[1][0].disable} className={buttonsState[1][0].styles} onClick={()=>handleButton(1,0)} ></button>
+          <button disabled={buttonsState[1][1].disable} className={buttonsState[1][1].styles} onClick={()=>handleButton(1,1)} ></button>
+          <button disabled={buttonsState[1][2].disable} className={buttonsState[1][2].styles} onClick={()=>handleButton(1,2)}></button>
         </div>
         <div className={styles.line}>
-          <button disabled={buttonsState['3x1'].disable} className={buttonsState['3x1'].styles} onClick={()=>handleButton('3x1')}></button>
-          <button disabled={buttonsState['3x2'].disable} className={buttonsState['3x3'].styles} onClick={()=>handleButton('3x2')}></button>
-          <button disabled={buttonsState['3x3'].disable} className={buttonsState['3x3'].styles} onClick={()=>handleButton('3x3')}></button>
+          <button disabled={buttonsState[2][0].disable} className={buttonsState[2][0].styles} onClick={()=>handleButton(2,0)} ></button>
+          <button disabled={buttonsState[2][1].disable} className={buttonsState[2][1].styles} onClick={()=>handleButton(2,1)} ></button>
+          <button disabled={buttonsState[2][2].disable} className={buttonsState[2][2].styles} onClick={()=>handleButton(2,2)}></button>
         </div>
       </div>
       <h1>{message}</h1>
