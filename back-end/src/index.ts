@@ -22,90 +22,69 @@ let games:Game[];
 var gameState:Game={} as Game;
 var player1:Player={} as Player;
 var player2:Player={} as Player;
-/*d
-io.on("connection", (socket:Socket) => {
-  
 
-  socket.emit("yourId",socket.id);
-  if(totalPlayers==2){
-    console.log('Player '+socket.id+ ' is ready to play');
-    console.log("Start Game");
-    
-    player2.Id=socket.id;
-    player2.Name="Vieira";
-    player2.Option=1;
-
-    gameState.Player1=player1;
-    gameState.Player2=player2;
-
-    gameState.Play=player2.Id;
-
-    io.emit("startGame",gameState);
-  }else{
-    if(totalPlayers>2){
-      //socket.emit("data","Tens de aguardar pela proxima vez");
-    }else{
-      player1.Id=socket.id;
-      player1.Name="Pedro";
-      player1.Option=0;
-      console.log('Player '+socket.id+ ' is ready to play');
-      //socket.emit("data","Waiting for players");
-    }
-  }
-  socket.on("disconnect", () => {
-    totalPlayers--;
-    console.log('Player '+socket.id+ ' Left the game');
-    socket.disconnect;
-  });
-
-  socket.on('gamePlay',(gameState:Game,playerId:string)=>{
-    
-    //Vai receber a jogada e o socket id
-    
-    //Verifica se o socket id era o do player certo
-
-    //Atualiza o gamestate
-
-    //emit para o outro player jogar
-    
-  });
-
-
-});
-*/
-//New player join the game
+// * New player join the game
 io.on("newPlayerJoin",(socket:Socket,PlayerName:string)=>{
   const player = new Player(socket.id,PlayerName);
   players.push(player);
-  //[TEMP]
+  // **[TEMP]
   if(!games[0]&&players.length<2){
-      //WAITING FOR PLAYERS
+    io.emit("waitingPlayer",{
+      'message':'Waiting for player'
+    });
   }else{
     if(!games[0]&&players.length==2){
-      //Send a message to player 1 to choose the option X or O
+      const player1Id=players[0].getId();
+      socket.broadcast.to(player1Id).emit('chooseOption', {
+        'message':'Choose Option'
+      });
+      socket.broadcast.to(player1Id).emit('waittingOption', {
+        'message':'Waitting Option'
+      });
     }else{
-      //The new players are spectaters, send a spectator mode;
-      //Send a gamestate
+
+      /*
+        ! NOT IMPLEMENTED YET
+        TODO : Send to new players a spectator mode;
+        TODO : Send a gameState like gameStart;  
+      */ 
+  
     }
   }
 });
 
-//Start new game
+// * Start new game
 io.on("gameStart",(playerOption:number)=>{
   players[0].option=playerOption;
-  let player2Option:number;
+
   if(playerOption==1) players[0].option=0;
   if(playerOption==0) players[0].option=1;
   const game = new Game(players[0],players[1]);
   games.push(game);
-  //Send message to all players with game state
-})
-
-//Player Move
-io.on("playerMove",(socket:Socket,move:Move)=>{
-  //Verify if player can move
   
-  //Update gameState
+  io.emit("gameStart",{
+    "board":game.getGameState(),
+    "player1":game.getPlayer1(),
+    "player2":game.getPlayer2(),
+    "playerAllowed":game.getPlayerAllowed(),  
+  });
+
+});
+
+// * Player Move
+io.on("playerMove",(socket:Socket,move:Move)=>{
+
+  if(socket.id!=games[0].getPlayerAllowed()) return;
+
+  // TODO : Verify if move is possible [OR INSIDE MOVE METHOD ON CLASS]
+
+  games[0].move(move,socket.id);
+
+  // * [TEMP] Send info to other player and spectators
+  io.emit("playerMove",{
+    'move':move,
+    'playerAllowed':games[0].getPlayerAllowed()
+  });
   //if end -wim draw lose 
     //Emit to all
     //If draw stay all

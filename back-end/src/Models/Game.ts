@@ -44,6 +44,21 @@ export default class Game {
         */
        
     }
+    getGameState(){
+        return this.gameState;
+    }
+    getPlayer1(){
+        return this.player1;
+    }
+    getPlayer2(){
+        return this.player2;
+    }
+    getPlayerAllowed(){
+        return this.playerAllowed;
+    }
+    setPlayerAllowed(playerId:string){
+        this.playerAllowed=playerId;
+    }
     restart(){
 
         return
