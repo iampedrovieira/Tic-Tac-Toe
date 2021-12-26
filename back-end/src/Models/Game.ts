@@ -8,7 +8,7 @@ export default class Game {
     playerAllowed:string;
 
     constructor(player1:Player,player2:Player){
-        this.gameState=[];
+        this.gameState=[[-1,-1,-1],[-1,-1,-1],[-1,-1,-1]];
         this.player1=player1;
         this.player2=player2;
         this.playerAllowed=player1.id;
