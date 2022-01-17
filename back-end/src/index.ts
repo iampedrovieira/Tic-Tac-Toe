@@ -2,6 +2,7 @@ import { Socket } from "socket.io";
 import Game from "./Models/Game";
 import Player from "./Models/Player";
 import Move from "./Types/Move";
+import StatusGame from "./Types/StatusGame";
 
 const express = require( "express" );
 const cors = require('cors')
@@ -72,10 +73,9 @@ io.on("connection", (socket:Socket) => {
     socket.on("playerMove",(move:Move)=>{
 
       if(socket.id!=games[0].getPlayerAllowed()) return;
-        console.log('Player '+socket.id + ' PLay')
-      // TODO : Verify if move is possible [OR INSIDE MOVE METHOD ON CLASS]
+      console.log('Player '+socket.id + ' PLay')
 
-      games[0].move(move,socket.id);
+      const status:StatusGame = games[0].move(move,socket.id);
 
       // * [TEMP] Send info to other player and spectators
       io.emit("playerMove",{
@@ -84,6 +84,13 @@ io.on("connection", (socket:Socket) => {
         "player2":games[0].getPlayer2(),
         "playerAllowed":games[0].getPlayerAllowed(),  
       });
+      console.table(status);
+      if(status.draw || status.win){
+
+        
+
+        // * Restart Game
+      }
       //if end -wim draw lose 
         //Emit to all
         //If draw stay all
@@ -92,5 +99,7 @@ io.on("connection", (socket:Socket) => {
       //Else
         //Emit move to all with next playerAllow
     })
+
+    // * Restart/new the game
 });
 

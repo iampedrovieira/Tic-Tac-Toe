@@ -15,10 +15,10 @@ interface Player{
 }
 
 interface Game{
-  'Player1':Player,
-  'Player2':Player,
-  'Play':string
-  'gameState':number[][];
+  'player1'?:Player,
+  'player2'?:Player,
+  'playerAllowed'?:string
+  'gameState'?:number[][];
 }
 interface Move{
   positionX:number,
@@ -38,48 +38,69 @@ interface InitalProps{
 
 const Home: NextPage = () => {
   
-  const [player_1,setPlayer_1] = useState<Player>();
-  const [player_2,setPlayer_2] = useState<Player>();
+
   const [playerId,setPlayerId] = useState<String>();
   const [disabledButtons,setDisabledButtons] = useState<boolean>(true);
   const [game,setGame] = useState<Game>();
   const [message,setMessage] = useState<string>('Connecting to server');
+  const [title,setTitle] = useState<string>('xxxxxxx - 3 vs 5 - yyyyyyyy');
   const [socket,setSocket] = useState<Socket|null>(null);
 
   const [buttonsState,setButtonsState]=useState<ButtonConfig[][]>(
     [
-      [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}],
-      [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}],
-      [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}]
+      [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}],
+      [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}],
+      [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}]
     ]);
   
   //On first run
   useEffect(() => {
-    const socket:Socket = io("http://localhost:8080");
-    socket.on("connect", async () => {
-      console.log("Connectou");
-      socket.on("yourId",(userId)=>{
-        setPlayerId(userId);
-        setMessage('Waitting for player!');
-        setSocket(socket)
-        return;
-      })
-  });
-  setMessage('Connecting...');
+    setMessage('Connecting...');
+    const socket = connectSocket();
+    if(socket!=null){
+      setSocket(socket)
+    }
+    
   },[]);
 
   //This is run when player id changed
   useEffect(() => {
     //This create a listenr to startGame entry.
     if(!socket)return;
+    socket.emit("newPlayerJoin",'PlayerName');
 
-    socket.on("startGame",(data:Game)=>{
+    socket.on('waitingPlayer',(message:string)=>{
+      console.log(message)
+      setMessage(message);
+    })
+    socket.on('waittingOption',(message:string)=>{
+      console.log(message)
+      setMessage(message);
+    })
+    socket.on('chooseOption',(message:string)=>{
+      console.log(message)
+      setMessage(message);
+      
+     
+      socket.emit("gameStart",0);
+  
+    })
+    socket.on("gameStart",(data:Game)=>{
       //Set data into gameState
+      console.log(data);
+      console.log(playerId);
+      
       setGame(data);
+      
       //Verify if the user
-      if(data.Play!=playerId){
+      if(data.playerAllowed==playerId){
         setMessage("It's your time to play");
-        
+        setButtonsState(
+          [
+            [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}],
+            [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}],
+            [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}]
+          ])
         //Block the buttons when exist in data
 
       }else{
@@ -94,7 +115,22 @@ const Home: NextPage = () => {
       }
     })
 
-    
+    //player move
+    socket.on("playerMove",(gameState:Game)=>{
+      //Set data into gameState
+      console.log('NEW MOVE');
+      const newGameState:Game={
+        'player1':gameState.player1,
+        'player2':gameState.player2,
+        'playerAllowed':gameState.playerAllowed,
+        'gameState':gameState.gameState,
+      }
+
+      setGame(newGameState);
+      console.log('GAME STATE UPDATED----------');
+      
+      
+    })
     // Finish Listener
     socket.on("finish",(winner:string)=>{
 
@@ -110,19 +146,54 @@ const Home: NextPage = () => {
   
   },[socket]);
 
+
+  useEffect(()=>{
+    console.log('GAME UPDATED EFFECT ------------------');
+    let newButtonState = buttonsState;
+
+    let isAllowed:boolean = false;
+    if(game?.playerAllowed==playerId)isAllowed=true;
+    if(isAllowed)setMessage('Its your time to play');
+    if(!isAllowed)setMessage('Wait for other player move');
+
+    for(let i = 0;i<3;i++){
+      for(let j = 0;j<3;j++){
+        
+        if(game?.gameState![i][j] == 0){
+          newButtonState[i][j].disable=true;
+          newButtonState[i][j].styles=styles.player1;
+        }
+        if(game?.gameState![i][j] == 1){
+          newButtonState[i][j].disable=true;
+          newButtonState[i][j].styles=styles.player2;
+        }
+        if(game?.gameState![i][j] == -1){
+          if(isAllowed)newButtonState[i][j].disable=false;
+          if(!isAllowed)newButtonState[i][j].disable=false;
+          newButtonState[i][j].styles=styles.button;
+        }
+      }
+    }
+    setButtonsState(newButtonState);
+    console.log('Button UPDATED');
+    console.log(newButtonState);
+  },[game]);
   function handleButton(positionX:number,positionY:number):void{
+    if(playerId!=game?.playerAllowed)alert('Cannot play');
     if(buttonsState[positionX][positionY].disable) return;
     let newButtonState = buttonsState;
-    if(player_1?.Option==0)newButtonState[positionX][positionY].styles=styles.player1;
-    if(player_1?.Option==1)newButtonState[positionX][positionY].styles=styles.player1;
+    let playerOption;
+    if(game?.player1?.Id==playerId)playerOption=game?.player1?.Option;newButtonState[positionX][positionY].styles=styles.player1;
+    if(game?.player2?.Id==playerId)playerOption=game?.player2?.Option;newButtonState[positionX][positionY].styles=styles.player2;
     newButtonState[positionX][positionY].disable=true;
+    console.log('CARREGUEI NO BUTTAO')
+    console.log(newButtonState)
+    console.log('----------------------')
     setButtonsState(newButtonState);
-    
     // TODO Change gameState
 
     const move:Move ={positionX,positionY}
-    socket?.emit('playerMove',socket,move);
-  
+    socket?.emit('playerMove',move);
   }
 
   return (
@@ -132,6 +203,7 @@ const Home: NextPage = () => {
         <meta name="description" content="Generated by create next app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <h1 className={styles.title} >{title}</h1>
       <div className={styles.game}>
         <div className={styles.line}>
           <button disabled={buttonsState[0][0].disable} className={buttonsState[0][0].styles} onClick={()=>handleButton(0,0)} ></button>
@@ -149,7 +221,7 @@ const Home: NextPage = () => {
           <button disabled={buttonsState[2][2].disable} className={buttonsState[2][2].styles} onClick={()=>handleButton(2,2)}></button>
         </div>
       </div>
-      <h1>{message}</h1>
+      <h1 className={styles.title}>{message}</h1>
     </div>
   )
 }
@@ -163,3 +235,7 @@ export const getStaticProps = async () => {
 }
 
 export default Home;
+
+function connectSocket() {
+  throw new Error('Function not implemented.');
+}
