@@ -2,13 +2,34 @@
 
 import { io, Socket } from "socket.io-client";
 
-function connectSocket():Socket{
+//* Connecting to server
+export function connectSocket(setSocket:(socket:Socket) =>void,setPlayerId:(playerId:string) =>void,){
 
     let socket:Socket 
     socket = io("http://localhost:8080");
     socket.on("connect", () => {
         console.log('Conneted');
-        return socket;
+        setPlayerId(socket.id);
+        setSocket(socket);
+        return
     });
-    return socket
+    return
+}
+
+export function sendPlayerInfo(socket:Socket,playerName:string):Boolean{
+
+    socket.emit("newPlayerJoin",playerName);
+
+    return true
+}
+
+// * Waitting for player
+
+export function waitingPlayer(socket:Socket,setMessage:(message:string)=>void){
+
+    socket.on('waitingPlayer',(message:string)=>{
+        setMessage(message);
+        return;
+    })
+    return;
 }

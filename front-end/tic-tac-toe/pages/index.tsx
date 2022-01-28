@@ -3,7 +3,8 @@ import Head from 'next/head'
 import { MouseEventHandler, useEffect, useState } from 'react'
 import styles from '../styles/Home.module.css'
 import { io, Socket} from "socket.io-client";
-
+import {connectSocket, sendPlayerInfo, waitingPlayer} from "./../libs/socketConnection";
+import { chooseOption, gameStart, waitingPlayerOption } from 'libs/SocketGame';
 
 
 interface Player{
@@ -56,65 +57,20 @@ const Home: NextPage = () => {
   //On first run
   useEffect(() => {
     setMessage('Connecting...');
-    const socket = connectSocket();
-    if(socket!=null){
-      setSocket(socket)
-    }
-    
-  },[]);
+    connectSocket(setSocket,setPlayerId);
+  },[1]);
 
-  //This is run when player id changed
+  //This is run when player is connected to server
   useEffect(() => {
-    //This create a listenr to startGame entry.
+    //This create a listener to startGame entry.
     if(!socket)return;
-    socket.emit("newPlayerJoin",'PlayerName');
-
-    socket.on('waitingPlayer',(message:string)=>{
-      console.log(message)
-      setMessage(message);
-    })
-    socket.on('waittingOption',(message:string)=>{
-      console.log(message)
-      setMessage(message);
-    })
-    socket.on('chooseOption',(message:string)=>{
-      console.log(message)
-      setMessage(message);
-      
-     
-      socket.emit("gameStart",0);
-  
-    })
-    socket.on("gameStart",(data:Game)=>{
-      //Set data into gameState
-      console.log(data);
-      console.log(playerId);
-      
-      setGame(data);
-      
-      //Verify if the user
-      if(data.playerAllowed==playerId){
-        setMessage("It's your time to play");
-        setButtonsState(
-          [
-            [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}],
-            [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}],
-            [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}]
-          ])
-        //Block the buttons when exist in data
-
-      }else{
-        //Block all buttons
-        setButtonsState(
-          [
-            [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}],
-            [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}],
-            [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}]
-          ])
-        setMessage("Wait for other player move");
-      }
-    })
-
+    console.log('---------CONECTOU-------------------'+socket.id);
+    sendPlayerInfo(socket,'name');
+    waitingPlayer(socket,setMessage);
+    waitingPlayerOption(socket,setMessage);
+    chooseOption(socket,setMessage);
+    // ! Esta abordagem não é a melhor porque os estados nao ficam atualizados
+    gameStart(socket,setMessage,setGame,setButtonsState,playerId);
     //player move
     socket.on("playerMove",(gameState:Game)=>{
       //Set data into gameState
@@ -148,7 +104,9 @@ const Home: NextPage = () => {
 
 
   useEffect(()=>{
-    console.log('GAME UPDATED EFFECT ------------------');
+    console.log('--- DEU UPDATE AO STATE DO GAME ---');
+    console.table(game);
+    console.log(': -> '+playerId +' estado do playerid');
     let newButtonState = buttonsState;
 
     let isAllowed:boolean = false;
@@ -236,6 +194,3 @@ export const getStaticProps = async () => {
 
 export default Home;
 
-function connectSocket() {
-  throw new Error('Function not implemented.');
-}
