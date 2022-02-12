@@ -7,12 +7,14 @@ export default class Game {
     player1:Player;
     player2:Player;
     playerAllowed:string;
+    draws:number;
 
     constructor(player1:Player,player2:Player){
         this.gameState=[[-1,-1,-1],[-1,-1,-1],[-1,-1,-1]];
         this.player1=player1;
         this.player2=player2;
         this.playerAllowed=player1.id;
+        this.draws=0;
     }
     move(playerMove:Move,playerId:string):StatusGame{
 
@@ -134,9 +136,14 @@ export default class Game {
     setPlayerAllowed(playerId:string){
         this.playerAllowed=playerId;
     }
+    getDraws(){
+        return this.draw;
+    }
+    draw(){
+        this.draws=this.draws+1;
+    }
     restart(){
-
-        return
+        this.gameState = this.gameState=[[-1,-1,-1],[-1,-1,-1],[-1,-1,-1]];
     }
 }
 

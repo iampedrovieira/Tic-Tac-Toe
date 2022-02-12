@@ -4,6 +4,7 @@ export default class Player{
     option:number;
     wins:number;
     losses:number;
+    draws:number;
 
     constructor(id:string,name:string){
         this.wins=0;
@@ -11,6 +12,7 @@ export default class Player{
         this.id=id;
         this.name=name;
         this.option=-1;
+        this.draws=0;
     }
     getOption(){
         return this.option;
@@ -24,8 +26,17 @@ export default class Player{
     won(){
         this.wins=this.wins+1;
     }
+    getLosses(){
+        return this.losses;
+    }
     lost(){
         this.losses=this.losses+1;
+    }
+    getDraws(){
+        return this.draw;
+    }
+    draw(){
+        this.draws=this.draws+1;
     }
     getName(){
         return this.name;
