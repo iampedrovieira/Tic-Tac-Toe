@@ -7,11 +7,11 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[],playersChec
     const onNewPlayerJoin = function (playerName:string){
         const player = new Player(socket.id,playerName);
         players.push(player);
+        io.emit("onPlayersChange",players);
         if(!games[0]&&players.length<2){
           io.emit("waitingPlayer",'Waiting for player');
         }else{
           if(games[0] && players.length>2){
-            // * Is spectator -> send game info
             io.emit("gameStart",{
               "gameState":games[0].getGameState(),
               "player1":games[0].getPlayer1(),

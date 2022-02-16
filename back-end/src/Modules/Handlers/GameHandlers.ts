@@ -76,9 +76,12 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[],playersChec
             io.emit("gameEnd",gameEndStatus);
             
           }
-          console.table(players);
+          io.emit("onPlayersChange",players);
           console.log('Waittting...');
-          setTimeout(()=>{io.emit('playerAvailable');},2500);
+          setTimeout(()=>{
+            io.to(players[0].getId()).emit('playerAvailable');
+            io.to(players[1].getId()).emit('playerAvailable')
+            ;},2500);
    
         }
       }
