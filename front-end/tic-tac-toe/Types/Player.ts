@@ -1,7 +1,7 @@
 export default interface Player{
-    Id?:String,
-    Name?:String,
-    Option:Number,
+    id:String,
+    name:String,
+    option:Number,
     wins:number;
     losses:number;
 }

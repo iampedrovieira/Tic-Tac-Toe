@@ -1,0 +1,1 @@
+// * This is a component with player info like [ Name  wins draws losses ]

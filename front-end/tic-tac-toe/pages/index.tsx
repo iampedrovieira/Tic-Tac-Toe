@@ -3,17 +3,10 @@ import Head from 'next/head'
 import { MouseEventHandler, useEffect, useState } from 'react'
 import styles from '../styles/Home.module.css'
 import { io, Socket} from "socket.io-client";
-import {connectSocket, sendPlayerInfo, waitingPlayer} from "./../libs/socketConnection";
-import { chooseOption, gameStart, waitingPlayerOption } from 'libs/SocketGame';
-
-
-interface Player{
-  Id?:String,
-  Name?:String,
-  Option:Number,
-  wins:number;
-  losses:number;
-}
+import {connectSocket, emitSendPlayerInfo, onPlayersChange, onWaitingPlayer} from "./../libs/socketConnection";
+import { onGameEnd, onGameStart, onPlayerAvailable} from './../libs/SocketGame';
+import PlayerListComponent from "./../Components/PlayersList/PlayerList";
+import Player from 'Types/Player';
 
 interface Game{
   'player1'?:Player,
@@ -44,8 +37,13 @@ const Home: NextPage = () => {
   const [disabledButtons,setDisabledButtons] = useState<boolean>(true);
   const [game,setGame] = useState<Game>();
   const [message,setMessage] = useState<string>('Connecting to server');
-  const [title,setTitle] = useState<string>('xxxxxxx - 3 vs 5 - yyyyyyyy');
+  const [title,setTitle] = useState<string>('xxxxxxx - 3 vs 5 - asdasdas');
   const [socket,setSocket] = useState<Socket|null>(null);
+  const [name,setName] = useState<string>('');
+  const [hideNameBox,setHideNameBox] = useState<string>(styles.input_hide);
+  const [hideCheckReadyBox,setHideCheckReadyBox] = useState<string>(styles.input_hide);
+  const [checkBox,setCheckBox] = useState<boolean>(false);
+  const[playersList,setPlayersList] = useState<Player[]>([]);
 
   const [buttonsState,setButtonsState]=useState<ButtonConfig[][]>(
     [
@@ -64,13 +62,14 @@ const Home: NextPage = () => {
   useEffect(() => {
     //This create a listener to startGame entry.
     if(!socket)return;
-    console.log('---------CONECTOU-------------------'+socket.id);
-    sendPlayerInfo(socket,'name');
-    waitingPlayer(socket,setMessage);
-    waitingPlayerOption(socket,setMessage);
-    chooseOption(socket,setMessage);
+    onPlayerAvailable(socket,setHideCheckReadyBox,setCheckBox);
+    setHideNameBox(styles.input);
+    onWaitingPlayer(socket,setMessage,setButtonsState);
+    onPlayersChange(socket,setPlayersList);
+    console.table(playersList)
+    onGameEnd(socket,setMessage,setButtonsState);
     // ! Esta abordagem não é a melhor porque os estados nao ficam atualizados
-    gameStart(socket,setMessage,setGame,setButtonsState,playerId);
+    onGameStart(socket,setMessage,setGame,setButtonsState,setHideCheckReadyBox,playerId);
     //player move
     socket.on("playerMove",(gameState:Game)=>{
       //Set data into gameState
@@ -141,8 +140,8 @@ const Home: NextPage = () => {
     if(buttonsState[positionX][positionY].disable) return;
     let newButtonState = buttonsState;
     let playerOption;
-    if(game?.player1?.Id==playerId)playerOption=game?.player1?.Option;newButtonState[positionX][positionY].styles=styles.player1;
-    if(game?.player2?.Id==playerId)playerOption=game?.player2?.Option;newButtonState[positionX][positionY].styles=styles.player2;
+    if(game?.player1?.id==playerId)playerOption=game?.player1?.option;newButtonState[positionX][positionY].styles=styles.player1;
+    if(game?.player2?.id==playerId)playerOption=game?.player2?.option;newButtonState[positionX][positionY].styles=styles.player2;
     newButtonState[positionX][positionY].disable=true;
     console.log('CARREGUEI NO BUTTAO')
     console.log(newButtonState)
@@ -154,6 +153,28 @@ const Home: NextPage = () => {
     socket?.emit('playerMove',move);
   }
 
+  function handleName():void{
+    
+    /*  
+    //* Send name to sever and change the flow on back end to only stay in 'waiting' when name have been sended
+    */
+    if(!socket) return;
+    console.log(name)
+    emitSendPlayerInfo(socket,name);
+    setHideNameBox(styles.input_hide);
+  }
+
+  function handleCheckBox(){
+    if(!checkBox){
+      setCheckBox(!checkBox)
+      socket?.emit('playerCheck');
+    }else{
+      setCheckBox(!checkBox)
+      socket?.emit('playerUnCheck');
+    }
+    
+  }
+
   return (
     <div >
       <Head>
@@ -162,6 +183,19 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <h1 className={styles.title} >{title}</h1>
+      <PlayerListComponent players={playersList}/>
+      <div className={hideNameBox}>
+        <p> Insert your name </p>
+        <input type="text" value={name} onChange={(event)=>setName(event.target.value)} />
+        <button onClick={()=>handleName()}> DONE </button>
+      </div>
+      <div  className={hideCheckReadyBox}> 
+      <input
+          type="checkbox"
+          checked={checkBox}
+          onChange={handleCheckBox}
+        />
+      </div>
       <div className={styles.game}>
         <div className={styles.line}>
           <button disabled={buttonsState[0][0].disable} className={buttonsState[0][0].styles} onClick={()=>handleButton(0,0)} ></button>
