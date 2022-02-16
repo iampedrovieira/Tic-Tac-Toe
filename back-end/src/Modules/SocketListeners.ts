@@ -7,7 +7,7 @@ module.exports = (io:any,players:Player[],games:Game[],playersCheck:Map<string,b
 
     const onConnection = (socket:Socket) =>{
         // * Put here the Listenters
-      const {onDisconnecting} = require('./Handlers/SocketDisconnectingHandler')(socket,players);
+      const {onDisconnecting} = require('./Handlers/SocketDisconnectingHandler')(io,socket,players,games);
       socket.on("disconnecting",onDisconnecting);
 
         // * New player join the game

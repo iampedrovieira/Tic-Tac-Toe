@@ -8,7 +8,10 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[],playersChec
 
     const onPlayerMove = function (move:Move){
         if(socket.id!=games[0].getPlayerAllowed()) return;
-        console.log('Player '+socket.id + ' PLay')
+        console.log('===========================================');
+        console.log('Player '+socket.id);
+        console.table(move);
+        console.log('===========================================');
         const status:StatusGame = games[0].move(move,socket.id);
         io.emit("playerMove",{
           "gameState":games[0].getGameState(),
@@ -16,7 +19,7 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[],playersChec
           "player2":games[0].getPlayer2(),
           "playerAllowed":games[0].getPlayerAllowed(),  
         });
-        console.table(status);
+  
         if(status.draw || status.win){
           if(status.draw){
             games[0].draws++;
@@ -27,7 +30,26 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[],playersChec
               */
               io.to(players[0],players[1]).emit('checkReady');
             }else{
-               // * Set player to the end of queue/ list;
+
+               // * Set 2 player to the end of queue/ list;
+               // ! CHANGE THIS FOREACH TO A FUNCTION
+              players.forEach((player)=>{
+                if(players.indexOf(player)<=1 && player.getId() in[games[0].getPlayer1().getId(),player.getId()!=games[0].getPlayer2().getId()]){
+                  players.splice(players.indexOf(player),1);
+                  players.push(player);
+                  return ;
+                } 
+              });
+              games.pop();
+              const gameEndStatus ={
+                'playerWin':'',
+                'isDraw':true,
+                'playerWinId':'',
+                'playerLossId':'',
+                'playerNextId':'',
+                'nextPlayer':players[0].getName() + ' and '+ players[1].getName()
+              }
+              io.emit("gameEnd",gameEndStatus);
             }
           }else{
             console.log(' ACABOU O JOGO');
@@ -36,6 +58,7 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[],playersChec
             */
             const gameEndStatus ={
               'playerWin':'teste1',
+              'isDraw':false,
               'playerWinId':players[0].getId(),
               'playerLossId':players[1].getId(),
               'playerNextId':players[1].getId(),
@@ -53,24 +76,11 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[],playersChec
             io.emit("gameEnd",gameEndStatus);
             
           }
-          // * If only have 2 players in list send to 2 players a restart
-          // * If have more set the loss player to end of queue and send a start new game
-          
-          // * If draw play again util 3 times after that send 2 player to end of queue.
-          
-          // * Timer
           console.table(players);
           console.log('Waittting...');
           setTimeout(()=>{io.emit('playerAvailable');},2500);
    
         }
-        //if end -wim draw lose 
-          //Emit to all
-          //If draw stay all
-          //ELSE send loser to end
-  
-        //Else
-          //Emit move to all with next playerAllow
       }
 
     return {
