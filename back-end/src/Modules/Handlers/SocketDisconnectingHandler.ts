@@ -14,12 +14,13 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[])=>{
                 return;
             } 
         });
-        io.emit("onPlayersChange",players);
         // * Verify if the player left was playing
         if (playerPosition<=1){
             // * Start new game with player[0] and player[1]
             games.pop();
-
+            players.map((player)=>{
+                player.setOption(-1);
+            });
             if(players.length>=2){
                 const gameEndStatus ={
                     'playerWin':players[0].getName(),
@@ -37,10 +38,9 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[])=>{
                 },2500);
             }else{
                 io.emit("waitingPlayer",'Waiting for player');
-            }
-            
-            
+            } 
         }
+        io.emit("onPlayersChange",players);
 
         
         // * Send to all players a list of players on

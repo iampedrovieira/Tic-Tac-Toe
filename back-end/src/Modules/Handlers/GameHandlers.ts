@@ -76,6 +76,9 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[],playersChec
             io.emit("gameEnd",gameEndStatus);
             
           }
+          players.map((players)=>{
+            players.setOption(-1);
+          });
           io.emit("onPlayersChange",players);
           console.log('Waittting...');
           setTimeout(()=>{
