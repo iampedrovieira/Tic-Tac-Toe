@@ -14,8 +14,19 @@
   max-width: 84%;
   word-wrap: break-word;
 }
-
 .option1{
+  align-self: flex-end;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+  height: 1rem;
+  width: 1rem;
+  background-color: rgb(0, 0, 243);
+  border-radius: 50%;
+}
+
+.option2{
   align-self: flex-end;
   margin-top: auto;
   margin-bottom: auto;
@@ -25,13 +36,41 @@
   width: 1rem;
   background-color: rgb(243, 0, 0);
   border-radius: 50%;
- 
 }
 
-.option2{
-
+.optionWaitting{
+  align-self: flex-end;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+  height: 1rem;
+  width: 1rem;
+  background-color: rgb(231, 243, 0);
+  border-radius: 50%;
 }
+
+.optionReady{
+  align-self: flex-end;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+  height: 1rem;
+  width: 1rem;
+  background-color: rgb(73, 243, 0);
+  border-radius: 50%;
+}
+
 
 .spectator{
-
+  align-self: flex-end;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+  height: 1rem;
+  width: 1rem;
+  background-color: rgb(109, 109, 109);
+  border-radius: 50%;
 }
