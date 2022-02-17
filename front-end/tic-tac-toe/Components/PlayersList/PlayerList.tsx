@@ -2,6 +2,7 @@
 
 import { Component } from "react";
 import Player from "Types/Player";
+import PlayerInfo from 'Components/PlayerInfo/PlayerInfo';
 
 export default class PlayerListComponent extends Component<{players:Player[] }> {
     
@@ -12,8 +13,9 @@ export default class PlayerListComponent extends Component<{players:Player[] }> 
                     Players 
                     {this.props.players.map((player,index)=>{
                         
-                        return(<li key={index}> 
-                        {player.name} </li>)
+                        return(
+                            <PlayerInfo key={index} player={player} />
+                        )
                     })}
                 </ol>
         </div>
