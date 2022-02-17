@@ -5,11 +5,11 @@ import ButtonConfig from "./../Types/ButtonConfig";
 import Game from "./../Types/Game";
 import EndGameStatus from 'Types/EndGameStatus';
 
-export function onPlayerAvailable(socket:Socket,setHideCheckReadyBox:(visible:string)=>void,setCheckBox:(visible:boolean)=>void){
+export function onPlayerAvailable(socket:Socket,setHideCheckReadyBox:(visible:boolean)=>void,setCheckBox:(visible:boolean)=>void){
 
   socket.on('playerAvailable',()=>{
     setCheckBox(false);
-    setHideCheckReadyBox(styles.input);
+    setHideCheckReadyBox(true);
       return;
   })
   return;
@@ -22,10 +22,10 @@ export function onReadyStatus(socket:Socket,setReadyBox:(visible:boolean)=>void)
 
 }
 
-export function onGameStart(socket:Socket,setMessage:(message:string)=>void,setGame:(game:Game)=>void,setButtonsState:(buttonsState:ButtonConfig[][])=>void,setHideCheckReadyBox:(visible:string)=>void,playerId?:String) {
+export function onGameStart(socket:Socket,setMessage:(message:string)=>void,setGame:(game:Game)=>void,setButtonsState:(buttonsState:ButtonConfig[][])=>void,setHideCheckReadyBox:(visible:boolean)=>void,playerId?:String) {
     socket.on("gameStart",(data:Game)=>{
         //Set data into gameState
-        setHideCheckReadyBox(styles.input_hide);
+        setHideCheckReadyBox(false);
         setGame(data);
         
         // * Set a time out with 'Game Will Start in ...';

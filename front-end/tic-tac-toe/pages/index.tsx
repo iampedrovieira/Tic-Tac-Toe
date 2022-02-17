@@ -6,6 +6,9 @@ import { io, Socket} from "socket.io-client";
 import {connectSocket, emitSendPlayerInfo, onPlayersChange, onWaitingPlayer} from "./../libs/socketConnection";
 import { onGameEnd, onGameStart, onPlayerAvailable} from './../libs/SocketGame';
 import PlayerListComponent from "./../Components/PlayersList/PlayerList";
+import CheckReadyModal from "./../Components/CheckReady/CheckReadyModal"
+import InputNameModal from "./../Components/InputName/InputNameModal"
+
 import Player from 'Types/Player';
 
 interface Game{
@@ -40,8 +43,8 @@ const Home: NextPage = () => {
   const [title,setTitle] = useState<string>('xxxxxxx - 3 vs 5 - asdasdas');
   const [socket,setSocket] = useState<Socket|null>(null);
   const [name,setName] = useState<string>('');
-  const [hideNameBox,setHideNameBox] = useState<string>(styles.input_hide);
-  const [hideCheckReadyBox,setHideCheckReadyBox] = useState<string>(styles.input_hide);
+  const [hideNameBox,setHideNameBox] = useState<boolean>(true);
+  const [hideCheckReadyBox,setHideCheckReadyBox] = useState<boolean>(false);
   const [checkBox,setCheckBox] = useState<boolean>(false);
   const[playersList,setPlayersList] = useState<Player[]>([]);
 
@@ -63,7 +66,7 @@ const Home: NextPage = () => {
     //This create a listener to startGame entry.
     if(!socket)return;
     onPlayerAvailable(socket,setHideCheckReadyBox,setCheckBox);
-    setHideNameBox(styles.input);
+    setHideNameBox(true);
     onWaitingPlayer(socket,setMessage,setButtonsState);
     onPlayersChange(socket,setPlayersList);
     console.table(playersList)
@@ -154,14 +157,14 @@ const Home: NextPage = () => {
   }
 
   function handleName():void{
-    
+    if(!name)return
     /*  
     //* Send name to sever and change the flow on back end to only stay in 'waiting' when name have been sended
     */
     if(!socket) return;
     console.log(name)
     emitSendPlayerInfo(socket,name);
-    setHideNameBox(styles.input_hide);
+    setHideNameBox(false);
   }
 
   function handleCheckBox(){
@@ -184,18 +187,20 @@ const Home: NextPage = () => {
       </Head>
       <h1 className={styles.title} >{title}</h1>
       <PlayerListComponent players={playersList}/>
-      <div className={hideNameBox}>
-        <p> Insert your name </p>
-        <input type="text" value={name} onChange={(event)=>setName(event.target.value)} />
-        <button onClick={()=>handleName()}> DONE </button>
-      </div>
-      <div  className={hideCheckReadyBox}> 
-      <input
-          type="checkbox"
-          checked={checkBox}
-          onChange={handleCheckBox}
-        />
-      </div>
+      <InputNameModal 
+        open={hideNameBox} 
+        setOpen={setHideNameBox}
+        name={name}
+        setName={setName}
+        onHandleName={handleName}
+       />
+      <CheckReadyModal 
+        open={hideCheckReadyBox} 
+        setOpen={setHideCheckReadyBox}
+        check={checkBox}
+        onChangeCheck={handleCheckBox}
+       />
+     
       <div className={styles.game}>
         <div className={styles.line}>
           <button disabled={buttonsState[0][0].disable} className={buttonsState[0][0].styles} onClick={()=>handleButton(0,0)} ></button>

@@ -25,7 +25,6 @@ export default class PlayerInfo extends Component<{player:Player },State> {
         if(this.props.player.option==-3)this.setState({styleOption:styles.optionReady});
     }
     componentWillReceiveProps(_newProps:{ player: Player; }){
-        console.table(this.props.player);
         if(_newProps.player.option==0)this.setState({styleOption:styles.option1});
         if(_newProps.player.option==1)this.setState({styleOption:styles.option2});
         if(_newProps.player.option==-1)this.setState({styleOption:styles.spectator});
