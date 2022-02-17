@@ -79,6 +79,8 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[],playersChec
           players.map((players)=>{
             players.setOption(-1);
           });
+          players[0].setOption(-2);
+          players[1].setOption(-2);
           io.emit("onPlayersChange",players);
           console.log('Waittting...');
           setTimeout(()=>{
