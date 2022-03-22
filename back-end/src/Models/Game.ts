@@ -12,12 +12,14 @@ export default class Game {
     constructor(player1:Player,player2:Player){
         this.gameState=[[-1,-1,-1],[-1,-1,-1],[-1,-1,-1]];
         this.player1=player1;
+        this.player1.setOption(0);
         this.player2=player2;
+        this.player2.setOption(1);
         this.playerAllowed=player1.id;
         this.draws=0;
     }
     move(playerMove:Move,playerId:string):StatusGame{
-
+        
         //Update game state
         // * Verify if player is allowed 
         if(playerId!=this.playerAllowed){
@@ -25,7 +27,7 @@ export default class Game {
                 'win':false,
                 'playerWin':'',
                 'playerWinOpiton':-1,
-                'draw':true,
+                'draw':false,
                 'message':'Not allowed to play'
             };
         }
@@ -36,11 +38,11 @@ export default class Game {
                 'win':false,
                 'playerWin':'',
                 'playerWinOpiton':-1,
-                'draw':true,
-                'message':'Not allowed to play'
+                'draw':false,
+                'message':'Cannot play here'
             };
         }
-
+        
         let playerOption:number = -1;
         
         if(this.player1.id==playerId){
@@ -137,7 +139,7 @@ export default class Game {
         this.playerAllowed=playerId;
     }
     getDraws(){
-        return this.draw;
+        return this.draws;
     }
     draw(){
         this.draws=this.draws+1;
@@ -145,12 +147,4 @@ export default class Game {
     restart(){
         this.gameState = this.gameState=[[-1,-1,-1],[-1,-1,-1],[-1,-1,-1]];
     }
-}
-
-
-//Auxiliar fuctions
-function verifyWin(gameState:Game){
-
-    //return {win:true||false,player:null||string}
-    return
 }
