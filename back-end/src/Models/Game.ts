@@ -145,6 +145,8 @@ export default class Game {
         this.draws=this.draws+1;
     }
     restart(){
+        this.player1.setOption(0);
+        this.player2.setOption(1);
         this.gameState = this.gameState=[[-1,-1,-1],[-1,-1,-1],[-1,-1,-1]];
     }
 }

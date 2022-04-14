@@ -7,9 +7,8 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[],playersChec
     const onNewPlayerJoin = function (playerName:string){
         const player = new Player(socket.id,playerName);
         players.push(player);
-        
         if(!games[0]&&players.length<2){
-          io.emit("waitingPlayer",'Waiting for player');
+          socket.emit("waitingPlayer",'Waiting for player');
         }else{
           if(games[0] && players.length>2){
             io.emit("gameStart",{
@@ -25,7 +24,9 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[],playersChec
             players[1].setOption(-2);
           }
         }
-        io.emit("onPlayersChange",players);
+        
+        socket.emit("onPlayersChange",players);
+        
     }
     
     const onPlayerCheck = function (){  
@@ -33,38 +34,36 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[],playersChec
       players.map((player)=>{
         if(player.getId()==socket.id)player.setOption(-3);
       });
-      io.emit("onPlayersChange",players);
-      if(players.length<2)return;
-    
-      if(playersCheck.get(players[0].getId()) && playersCheck.get(players[1].getId())){
-        playersCheck.set(players[0].getId(),false);
-        playersCheck.set(players[1].getId(),false);
+      if(players.length>=2){
         
-        if(!games[0]){
+        if(playersCheck.get(players[0].getId()) && playersCheck.get(players[1].getId())){
+          playersCheck.set(players[0].getId(),false);
+          playersCheck.set(players[1].getId(),false);
+          if(!games[0]){
+            // * Start Game
+            const game = new Game(players[0],players[1]);
+            games.push(game);
+            io.emit("gameStart",{
+              "gameState":game.getGameState(),
+              "player1":game.getPlayer1(),
+              "player2":game.getPlayer2(),
+              "playerAllowed":game.getPlayerAllowed(),  
+            });
+          }else{
+            players[0].setOption(0);
+            players[1].setOption(1);
+            games[0].restart();
+            io.emit("gameStart",{
+              "gameState":games[0].getGameState(),
+              "player1":games[0].getPlayer1(),
+              "player2":games[0].getPlayer2(),
+              "playerAllowed":games[0].getPlayerAllowed(),  
+            });
+          }
           
-          // * Start Game
-          players[0].option=0;
-          players[1].option=1;
-          const game = new Game(players[0],players[1]);
-          games.push(game);
-          io.emit("onPlayersChange",players);
-          io.emit("gameStart",{
-            "gameState":game.getGameState(),
-            "player1":game.getPlayer1(),
-            "player2":game.getPlayer2(),
-            "playerAllowed":game.getPlayerAllowed(),  
-          });
-        }else{
-          console.log('New Game Restart');
-          games[0].restart();
-          io.emit("gameStart",{
-            "gameState":games[0].getGameState(),
-            "player1":games[0].getPlayer1(),
-            "player2":games[0].getPlayer2(),
-            "playerAllowed":games[0].getPlayerAllowed(),  
-          });
         }
       }
+      io.emit("onPlayersChange",players);
     }
 
     const onPlayerUnCheck = function (){   
@@ -73,7 +72,6 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[],playersChec
           if(player.getId()==socket.id)player.setOption(-2);
         });
         io.emit("onPlayersChange",players);
-        io.emit('updateCheck',playersCheck);
     }
     return {
         onNewPlayerJoin,

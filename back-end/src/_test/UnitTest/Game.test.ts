@@ -204,6 +204,8 @@ describe('Game Class', () => {
     game.move(move,player1.getId());
     game.restart();
     expect(game.getGameState()).toEqual([[-1,-1,-1],[-1,-1,-1],[-1,-1,-1]]);
+    expect(player1.getOption()).toBe(0);
+    expect(player2.getOption()).toBe(1);
 
   })
 })

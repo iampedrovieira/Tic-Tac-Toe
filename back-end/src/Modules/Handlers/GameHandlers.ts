@@ -82,7 +82,7 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[],playersChec
           players[0].setOption(-2);
           players[1].setOption(-2);
           io.emit("onPlayersChange",players);
-          console.log('Waittting...');
+          
           setTimeout(()=>{
             io.to(players[0].getId()).emit('playerAvailable');
             io.to(players[1].getId()).emit('playerAvailable')

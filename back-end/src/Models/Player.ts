@@ -33,7 +33,7 @@ export default class Player{
         this.losses=this.losses+1;
     }
     getDraws(){
-        return this.draw;
+        return this.draws;
     }
     draw(){
         this.draws=this.draws+1;
