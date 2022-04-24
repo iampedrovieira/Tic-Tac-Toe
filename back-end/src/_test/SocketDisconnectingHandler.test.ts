@@ -115,14 +115,8 @@ describe("Sockets Disconnection Tests", () => {
       socketClient.on("onPlayersChange", () => {
         const socketClient2 = io("http://localhost:8081");
         socketClient2.on("connect", () => {
-
           socketClient2.on("onPlayersChange", () => {
-            
-            console.table(players)
-            console.log('dentroo')
             socketClient2.on("waitingPlayer", (arg: string) => {
-              console.log('sadasd ad')
-              console.table(players)
               expect(games.length).toBe(0);
               expect(arg).toBe("Waiting for player");
               expect(players[0].getId()).toEqual(socketClient2.id);
