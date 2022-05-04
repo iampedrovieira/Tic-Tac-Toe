@@ -1,185 +1,138 @@
-import type { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next'
-import Head from 'next/head'
-import { MouseEventHandler, useEffect, useState } from 'react'
-import styles from '../styles/Home.module.css'
-import { io, Socket} from "socket.io-client";
-import {connectSocket, emitSendPlayerInfo, onPlayersChange, onWaitingPlayer} from "./../libs/socketConnection";
-import { onGameEnd, onGameStart, onPlayerAvailable} from './../libs/SocketGame';
+import type { GetServerSideProps, GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
+import Head from "next/head";
+import { MouseEventHandler, useEffect, useState } from "react";
+import styles from "../styles/Home.module.css";
+import { io, Socket } from "socket.io-client";
+import {
+  connectSocket,
+  emitSendPlayerInfo,
+  onPlayersChange,
+  onWaitingPlayer,
+} from "./../libs/socketConnection";
+import {
+  onGameEnd,
+  onGameStart,
+  onPlayerAvailable,
+} from "./../libs/SocketGame";
 import PlayerListComponent from "./../Components/PlayersList/PlayerList";
-import CheckReadyModal from "./../Components/CheckReady/CheckReadyModal"
-import InputNameModal from "./../Components/InputName/InputNameModal"
+import BoardComponent from "./../Components/Board/Board";
+import CheckReadyModal from "./../Components/CheckReady/CheckReadyModal";
+import InputNameModal from "./../Components/InputName/InputNameModal";
 
-import Player from 'Types/Player';
+import Player from "Types/Player";
 
-interface Game{
-  'player1'?:Player,
-  'player2'?:Player,
-  'playerAllowed'?:string
-  'gameState'?:number[][];
+interface Game {
+  player1?: Player;
+  player2?: Player;
+  playerAllowed?: string;
+  gameState: number[][];
 }
-interface Move{
-  positionX:number,
-  positionY:number
+interface Move {
+  positionX: number;
+  positionY: number;
 }
-interface ButtonConfig{
-  'styles':string,
-  'disable':boolean
-}
-
-
-interface InitalProps{
-  socket:Socket,
-  userId:string,
-  status:boolean
+interface ButtonConfig {
+  styles: string;
+  disable: boolean;
 }
 
-const Home: NextPage = () => {
+
+const Home = () => {
+ 
+
   
+  const [socket, setSocket] = useState<Socket>();
+  const [playerId, setPlayerId] = useState<String>();
+  const [disabledButtons, setDisabledButtons] = useState<boolean>(true);
+  const [game, setGame] = useState<Game>();
+  const [message, setMessage] = useState<string>("Connecting to server");
+  const [title, setTitle] = useState<string>("xxxxxxx - 3 vs 5 - asdasdas");
+  
+  const [name, setName] = useState<string>("");
+  const [hideNameBox, setHideNameBox] = useState<boolean>(true);
+  const [hideCheckReadyBox, setHideCheckReadyBox] = useState<boolean>(false);
+  const [checkBox, setCheckBox] = useState<boolean>(false);
+  const [playersList, setPlayersList] = useState<Player[]>([]);
 
-  const [playerId,setPlayerId] = useState<String>();
-  const [disabledButtons,setDisabledButtons] = useState<boolean>(true);
-  const [game,setGame] = useState<Game>();
-  const [message,setMessage] = useState<string>('Connecting to server');
-  const [title,setTitle] = useState<string>('xxxxxxx - 3 vs 5 - asdasdas');
-  const [socket,setSocket] = useState<Socket|null>(null);
-  const [name,setName] = useState<string>('');
-  const [hideNameBox,setHideNameBox] = useState<boolean>(true);
-  const [hideCheckReadyBox,setHideCheckReadyBox] = useState<boolean>(false);
-  const [checkBox,setCheckBox] = useState<boolean>(false);
-  const[playersList,setPlayersList] = useState<Player[]>([]);
-
-  const [buttonsState,setButtonsState]=useState<ButtonConfig[][]>(
+  const [buttonsState, setButtonsState] = useState<ButtonConfig[][]>([
     [
-      [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}],
-      [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}],
-      [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}]
-    ]);
-  
-  //On first run
+      { styles: styles.button, disable: true },
+      { styles: styles.button, disable: true },
+      { styles: styles.button, disable: true },
+    ],
+    [
+      { styles: styles.button, disable: true },
+      { styles: styles.button, disable: true },
+      { styles: styles.button, disable: true },
+    ],
+    [
+      { styles: styles.button, disable: true },
+      { styles: styles.button, disable: true },
+      { styles: styles.button, disable: true },
+    ],
+  ]);
   useEffect(() => {
-    setMessage('Connecting...');
-    connectSocket(setSocket,setPlayerId);
-  },[1]);
-
+    async function connection() {
+     const socketClient = await connectSocket();
+      setSocket(socketClient)
+    }
+    connection();
+  },[]);
   //This is run when player is connected to server
   useEffect(() => {
     //This create a listener to startGame entry.
-    if(!socket)return;
-    onPlayerAvailable(socket,setHideCheckReadyBox,setCheckBox);
+    if (!socket) return;
+    setPlayerId(socket.id);
+    onPlayerAvailable(socket, setHideCheckReadyBox, setCheckBox);
     setHideNameBox(true);
-    onWaitingPlayer(socket,setMessage,setButtonsState);
-    onPlayersChange(socket,setPlayersList);
-    console.table(playersList)
-    onGameEnd(socket,setMessage,setButtonsState);
+    onWaitingPlayer(socket, setMessage, setButtonsState);
+    onPlayersChange(socket, setPlayersList);
+    onGameEnd(socket, setMessage, setButtonsState);
     // ! Esta abordagem não é a melhor porque os estados nao ficam atualizados
-    onGameStart(socket,setMessage,setGame,setButtonsState,setHideCheckReadyBox,playerId);
+    onGameStart(
+      socket,
+      setMessage,
+      setGame,
+      setButtonsState,
+      setHideCheckReadyBox,
+      playerId
+    );
     //player move
-    socket.on("playerMove",(gameState:Game)=>{
+    socket.on("playerMove", (gameState: Game) => {
       //Set data into gameState
-      console.log('NEW MOVE');
-      const newGameState:Game={
-        'player1':gameState.player1,
-        'player2':gameState.player2,
-        'playerAllowed':gameState.playerAllowed,
-        'gameState':gameState.gameState,
-      }
-
+      const newGameState: Game = {
+        player1: gameState.player1,
+        player2: gameState.player2,
+        playerAllowed: gameState.playerAllowed,
+        gameState: gameState.gameState,
+      };
       setGame(newGameState);
-      console.log('GAME STATE UPDATED----------');
-      
-      
-    })
-    // Finish Listener
-    socket.on("finish",(winner:string)=>{
-
-      // * [TEMP] Dá restart ao jogo
-      // TODO Falta atualzar o gameState
-      setButtonsState(
-        [
-          [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}],
-          [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}],
-          [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}]
-        ]);
     });
-  
-  },[socket]);
+  }, [socket]);
 
-
-  useEffect(()=>{
-    console.log('--- DEU UPDATE AO STATE DO GAME ---');
-    console.table(game);
-    console.log(': -> '+playerId +' estado do playerid');
-    let newButtonState = buttonsState;
-
-    let isAllowed:boolean = false;
-    if(game?.playerAllowed==playerId)isAllowed=true;
-    if(isAllowed)setMessage('Its your time to play');
-    if(!isAllowed)setMessage('Wait for other player move');
-
-    for(let i = 0;i<3;i++){
-      for(let j = 0;j<3;j++){
-        
-        if(game?.gameState![i][j] == 0){
-          newButtonState[i][j].disable=true;
-          newButtonState[i][j].styles=styles.player1;
-        }
-        if(game?.gameState![i][j] == 1){
-          newButtonState[i][j].disable=true;
-          newButtonState[i][j].styles=styles.player2;
-        }
-        if(game?.gameState![i][j] == -1){
-          if(isAllowed)newButtonState[i][j].disable=false;
-          if(!isAllowed)newButtonState[i][j].disable=false;
-          newButtonState[i][j].styles=styles.button;
-        }
-      }
-    }
-    setButtonsState(newButtonState);
-    console.log('Button UPDATED');
-    console.log(newButtonState);
-  },[game]);
-  function handleButton(positionX:number,positionY:number):void{
-    if(playerId!=game?.playerAllowed)alert('Cannot play');
-    if(buttonsState[positionX][positionY].disable) return;
-    let newButtonState = buttonsState;
-    let playerOption;
-    if(game?.player1?.id==playerId)playerOption=game?.player1?.option;newButtonState[positionX][positionY].styles=styles.player1;
-    if(game?.player2?.id==playerId)playerOption=game?.player2?.option;newButtonState[positionX][positionY].styles=styles.player2;
-    newButtonState[positionX][positionY].disable=true;
-    console.log('CARREGUEI NO BUTTAO')
-    console.log(newButtonState)
-    console.log('----------------------')
-    setButtonsState(newButtonState);
-    // TODO Change gameState
-
-    const move:Move ={positionX,positionY}
-    socket?.emit('playerMove',move);
-  }
-
-  function handleName():void{
-    if(!name)return
+  function handleName(): void {
+    if (!name) return;
     /*  
     //* Send name to sever and change the flow on back end to only stay in 'waiting' when name have been sended
     */
-    if(!socket) return;
-    console.log(name)
-    emitSendPlayerInfo(socket,name);
+    if (!socket) return;
+    console.log(name);
+    emitSendPlayerInfo(socket, name);
     setHideNameBox(false);
   }
 
-  function handleCheckBox(){
-    if(!checkBox){
-      setCheckBox(!checkBox)
-      socket?.emit('playerCheck');
-    }else{
-      setCheckBox(!checkBox)
-      socket?.emit('playerUnCheck');
+  function handleCheckBox() {
+    if (!checkBox) {
+      setCheckBox(!checkBox);
+      socket?.emit("playerCheck");
+    } else {
+      setCheckBox(!checkBox);
+      socket?.emit("playerUnCheck");
     }
-    
   }
 
   return (
-    <div >
+    <div>
       <Head>
         <title>Tic Tac Toe Game</title>
         <meta name="description" content="Generated by create next app" />
@@ -188,53 +141,41 @@ const Home: NextPage = () => {
       <div className={styles.container}>
         <div className={styles.Title}> TIC TAC TOE</div>
         <div className={styles.Players}>
-          <PlayerListComponent players={playersList}/>
+          <PlayerListComponent players={playersList} />
         </div>
         <div className={styles.Game}>
-          <div className={styles.game}>
-          <div className={styles.line}>
-            <button disabled={buttonsState[0][0].disable} className={buttonsState[0][0].styles} onClick={()=>handleButton(0,0)} ></button>
-            <button disabled={buttonsState[0][1].disable} className={buttonsState[0][1].styles} onClick={()=>handleButton(0,1)} ></button>
-            <button disabled={buttonsState[0][2].disable} className={buttonsState[0][2].styles} onClick={()=>handleButton(0,2)}></button>
-          </div>
-          <div className={styles.line}>
-            <button disabled={buttonsState[1][0].disable} className={buttonsState[1][0].styles} onClick={()=>handleButton(1,0)} ></button>
-            <button disabled={buttonsState[1][1].disable} className={buttonsState[1][1].styles} onClick={()=>handleButton(1,1)} ></button>
-            <button disabled={buttonsState[1][2].disable} className={buttonsState[1][2].styles} onClick={()=>handleButton(1,2)}></button>
-          </div>
-          <div className={styles.line}>
-            <button disabled={buttonsState[2][0].disable} className={buttonsState[2][0].styles} onClick={()=>handleButton(2,0)} ></button>
-            <button disabled={buttonsState[2][1].disable} className={buttonsState[2][1].styles} onClick={()=>handleButton(2,1)} ></button>
-            <button disabled={buttonsState[2][2].disable} className={buttonsState[2][2].styles} onClick={()=>handleButton(2,2)}></button>
-          </div>
+          { socket && game &&
+            <BoardComponent game={game} socket={socket} setMessage={setMessage}/>
+          } 
         </div>
-      </div>
         <div className={styles.Result}> {message}</div>
       </div>
-      <InputNameModal 
-        open={hideNameBox} 
+      <InputNameModal
+        open={hideNameBox}
         setOpen={setHideNameBox}
         name={name}
         setName={setName}
         onHandleName={handleName}
-       />
-      <CheckReadyModal 
-        open={hideCheckReadyBox} 
+      />
+      <CheckReadyModal
+        open={hideCheckReadyBox}
         setOpen={setHideCheckReadyBox}
         check={checkBox}
         onChangeCheck={handleCheckBox}
-       />
+      />
     </div>
-  )
-}
-
-// This gets called on every request
-
-export const getStaticProps = async () => {
-  return {props:{
-  } 
-  } 
-}
+  );
+};
 
 export default Home;
 
+
+interface intialprops{
+  props:{
+    socketClient:any
+  }
+}
+/*
+ TODO DAR MOUNT AO BOARD JA COM SOCKET
+   * COLOCAR A CONEÇÃO AO SERVIDOR COMO SERVERSIDER PROPS [CONNECTA E RECEBE LOGO COMO PROPS NO INICIO DA PAGINA]
+*/

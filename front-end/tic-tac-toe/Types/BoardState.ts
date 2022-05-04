@@ -4,9 +4,9 @@ import Game from "./Game";
 
 export default interface BoardState{
     playerId:string,
-    disableButtons:Boolean,
     game:Game,
     message:string,
-    socket?:Socket,
-    buttonsState:Array<Array<ButtonConfig>>
+    socket:Socket,
+    buttonsState:Array<Array<ButtonConfig>>,
+    setMessage:Function
 }

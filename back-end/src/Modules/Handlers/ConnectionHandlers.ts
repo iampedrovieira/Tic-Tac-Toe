@@ -11,7 +11,7 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[],playersChec
           socket.emit("waitingPlayer",'Waiting for player');
         }else{
           if(games[0] && players.length>2){
-            io.emit("gameStart",{
+            socket.emit("gameStart",{
               "gameState":games[0].getGameState(),
               "player1":games[0].getPlayer1(),
               "player2":games[0].getPlayer2(),
@@ -25,7 +25,7 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[],playersChec
           }
         }
         
-        socket.emit("onPlayersChange",players);
+        io.emit("onPlayersChange",players);
         
     }
     
