@@ -1,8 +1,7 @@
-import type { GetServerSideProps, GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
 import Head from "next/head";
-import { MouseEventHandler, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
 import {
   connectSocket,
   emitSendPlayerInfo,
@@ -39,12 +38,10 @@ interface ButtonConfig {
 
 const Home = () => {
  
-
-  
   const [socket, setSocket] = useState<Socket>();
   const [playerId, setPlayerId] = useState<String>();
-  const [disabledButtons, setDisabledButtons] = useState<boolean>(true);
   const [game, setGame] = useState<Game>();
+  const [gameEnd,setGameEnd] = useState<Boolean>(false);
   const [message, setMessage] = useState<string>("Connecting to server");
   const [title, setTitle] = useState<string>("xxxxxxx - 3 vs 5 - asdasdas");
   
@@ -54,23 +51,6 @@ const Home = () => {
   const [checkBox, setCheckBox] = useState<boolean>(false);
   const [playersList, setPlayersList] = useState<Player[]>([]);
 
-  const [buttonsState, setButtonsState] = useState<ButtonConfig[][]>([
-    [
-      { styles: styles.button, disable: true },
-      { styles: styles.button, disable: true },
-      { styles: styles.button, disable: true },
-    ],
-    [
-      { styles: styles.button, disable: true },
-      { styles: styles.button, disable: true },
-      { styles: styles.button, disable: true },
-    ],
-    [
-      { styles: styles.button, disable: true },
-      { styles: styles.button, disable: true },
-      { styles: styles.button, disable: true },
-    ],
-  ]);
   useEffect(() => {
     async function connection() {
      const socketClient = await connectSocket();
@@ -85,16 +65,15 @@ const Home = () => {
     setPlayerId(socket.id);
     onPlayerAvailable(socket, setHideCheckReadyBox, setCheckBox);
     setHideNameBox(true);
-    onWaitingPlayer(socket, setMessage, setButtonsState);
+    onWaitingPlayer(socket, setMessage);
     onPlayersChange(socket, setPlayersList);
-    onGameEnd(socket, setMessage, setButtonsState);
-    // ! Esta abordagem não é a melhor porque os estados nao ficam atualizados
+    onGameEnd(socket,setMessage,setGameEnd);
     onGameStart(
       socket,
       setMessage,
       setGame,
-      setButtonsState,
       setHideCheckReadyBox,
+      setGameEnd,
       playerId
     );
     //player move
@@ -116,7 +95,6 @@ const Home = () => {
     //* Send name to sever and change the flow on back end to only stay in 'waiting' when name have been sended
     */
     if (!socket) return;
-    console.log(name);
     emitSendPlayerInfo(socket, name);
     setHideNameBox(false);
   }
@@ -129,6 +107,10 @@ const Home = () => {
       setCheckBox(!checkBox);
       socket?.emit("playerUnCheck");
     }
+  }
+
+  function handleEmitMove(move:Move){
+    socket!.emit("playerMove", move);
   }
 
   return (
@@ -145,7 +127,7 @@ const Home = () => {
         </div>
         <div className={styles.Game}>
           { socket && game &&
-            <BoardComponent game={game} socket={socket} setMessage={setMessage}/>
+            <BoardComponent game={game} socket={socket} setMessage = {setMessage} handleEmitMove={handleEmitMove} gameEnd={gameEnd}/>
           } 
         </div>
         <div className={styles.Result}> {message}</div>

@@ -1,6 +1,7 @@
 // * Do logic to connect to socket server with name and other info
 
 import { io, Socket } from "socket.io-client";
+import BoardState from "Types/BoardState";
 const customParser = require('socket.io-json-parser');
 import ButtonConfig from "Types/ButtonConfig";
 import Player from "Types/Player";
@@ -36,16 +37,10 @@ export function emitSendPlayerInfo(socket:Socket,playerName:string):void{
 
 // * Waitting for player
 
-export function onWaitingPlayer(socket:Socket,setMessage:(message:string)=>void,setButtonsState:(buttonsState:ButtonConfig[][])=>void){
+export function onWaitingPlayer(socket:Socket,setMessage:(message:string)=>void,){
 
-    socket.on('waitingPlayer',(message:string)=>{
-        setMessage(message);
-        setButtonsState(
-            [
-            [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}],
-            [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}],
-            [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}]
-          ]);
+    socket.on('waitingPlayer',(msg:string)=>{
+        setMessage(msg)
         return;
     })
     return;

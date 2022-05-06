@@ -22,51 +22,34 @@ export function onReadyStatus(socket:Socket,setReadyBox:(visible:boolean)=>void)
 
 }
 
-export function onGameStart(socket:Socket,setMessage:(message:string)=>void,setGame:(game:Game)=>void,setButtonsState:(buttonsState:ButtonConfig[][])=>void,setHideCheckReadyBox:(visible:boolean)=>void,playerId?:String) {
+export function onGameStart(socket:Socket,setMessage:(message:string)=>void,setGame:(game:Game)=>void,setHideCheckReadyBox:(visible:boolean)=>void,setGameEnd:(gameEnde:Boolean)=>void,playerId?:String) {
     socket.on("gameStart",(data:Game)=>{
         //Set data into gameState
         setHideCheckReadyBox(false);
         setGame(data);
-        
+        setGameEnd(false);
         // * Set a time out with 'Game Will Start in ...';
 
         //Verify if the user
         if(data.playerAllowed==playerId){
           setMessage("It's your time to play");
-          setButtonsState(
-            [
-              [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}],
-              [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}],
-              [{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false},{'styles':styles.button,'disable':false}]
-            ])
-          //Block the buttons when exist in data
+        
   
         }else{
           //Block all buttons
-          setButtonsState(
-            [
-              [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}],
-              [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}],
-              [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}]
-            ])
           setMessage("Wait for other player move");
         }
       })
     
 }
 
-export function onGameEnd(socket:Socket,setMessage:(message:string)=>void,setButtonsState:(buttonsState:ButtonConfig[][])=>void){
+export function onGameEnd(socket:Socket,setMessage:(message:string)=>void,setGameEnd:(gameEnde:Boolean)=>void){
 
   // ! On back end, when game is end verify if have more players on lobby, and set loser to end.
   // ! Send to front end (all players) a json with winner, loser and next player.
   socket.on("gameEnd",(endGameStatus:EndGameStatus)=>{
-    setButtonsState(
-      [
-      [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}],
-      [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}],
-      [{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true},{'styles':styles.button,'disable':true}]
-    ]);
   
+    setGameEnd(true);
     setMessage('Player -> '+ endGameStatus.playerWin +'|| Next Player -> '+endGameStatus.nextPlayer);
   });
 }
