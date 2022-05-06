@@ -12,6 +12,7 @@ import {
   onGameEnd,
   onGameStart,
   onPlayerAvailable,
+  onPlayerMove,
 } from "./../libs/SocketGame";
 import PlayerListComponent from "./../Components/PlayersList/PlayerList";
 import BoardComponent from "./../Components/Board/Board";
@@ -77,16 +78,8 @@ const Home = () => {
       playerId
     );
     //player move
-    socket.on("playerMove", (gameState: Game) => {
-      //Set data into gameState
-      const newGameState: Game = {
-        player1: gameState.player1,
-        player2: gameState.player2,
-        playerAllowed: gameState.playerAllowed,
-        gameState: gameState.gameState,
-      };
-      setGame(newGameState);
-    });
+    onPlayerMove(socket,setGame,setMessage)    
+  
   }, [socket]);
 
   function handleName(): void {

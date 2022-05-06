@@ -15,11 +15,20 @@ export function onPlayerAvailable(socket:Socket,setHideCheckReadyBox:(visible:bo
   return;
 }
 
-export function onReadyStatus(socket:Socket,setReadyBox:(visible:boolean)=>void){
+export function onPlayerMove(socket:Socket,setGame:(game:Game)=>void,setMessage:(message:string)=>void){
 
-  // * This is used to change a ready and unReady status of all players.
-
-
+  socket.on("playerMove", (gameState: Game) => {
+    //Set data into gameState
+    const newGameState: Game = {
+      player1: gameState.player1,
+      player2: gameState.player2,
+      playerAllowed: gameState.playerAllowed,
+      gameState: gameState.gameState,
+    };
+    setGame(newGameState);
+    if(socket.id == gameState.playerAllowed) setMessage("It's your time to play");
+    if(socket.id != gameState.playerAllowed) setMessage("Wait for other player move");
+  });
 }
 
 export function onGameStart(socket:Socket,setMessage:(message:string)=>void,setGame:(game:Game)=>void,setHideCheckReadyBox:(visible:boolean)=>void,setGameEnd:(gameEnde:Boolean)=>void,playerId?:String) {
