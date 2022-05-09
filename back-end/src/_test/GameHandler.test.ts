@@ -197,7 +197,7 @@ describe("Sockets Game Tests", () => {
       games[0].move({ positionX: 2, positionY: 2 }, socketClient1.id);
       games[0].move({ positionX: 1, positionY: 2 }, socketClient2.id);
 
-      socketClient1.on("newGame", (gameEndStatus) => {
+      socketClient1.on("gameEnd", (gameEndStatus) => {
         expect(players[0].getId()).toEqual(socketClient1.id);
         expect(players[1].getId()).toEqual(socketClient2.id);
         expect(players[2].getId()).toEqual(socketClient3.id);

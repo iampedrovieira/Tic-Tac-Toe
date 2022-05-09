@@ -31,9 +31,9 @@ module.exports = (io:any,socket:Socket,players:Player[],games:Game[],playersChec
                 'playerWinId':'',
                 'playerLossId':'',
                 'playerNextId':'',
-                'nextPlayer':''
+                'nextPlayers':[]
               }
-              io.emit('newGame',gameEndStatus)
+              io.emit('gameEnd',gameEndStatus)
             }else{
               
                const player1 = players[0];
