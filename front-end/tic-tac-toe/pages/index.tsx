@@ -62,6 +62,7 @@ const Home = () => {
       setGame,
       setHideCheckReadyBox,
       setGameEnd,
+      setTitle,
       playerId
     );
     //player move

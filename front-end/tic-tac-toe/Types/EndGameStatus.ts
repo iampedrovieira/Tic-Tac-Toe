@@ -1,8 +1,8 @@
 export default interface EndGameStatus{
     'playerWin':string,
+    'isDraw':boolean
     'playerWinId':string,
     'playerLossId':string,
     'playerNextId':string,
-    'nextPlayer':string,
-    'isDraw':boolean
+    'nextPlayers':string,
 }

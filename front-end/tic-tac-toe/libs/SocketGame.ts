@@ -33,14 +33,17 @@ export function onPlayerMove(socket:Socket,setGame:(game:Game)=>void,setMessage:
   });
 }
 
-export function onGameStart(socket:Socket,setMessage:(message:string)=>void,setGame:(game:Game)=>void,setHideCheckReadyBox:(visible:boolean)=>void,setGameEnd:(gameEnde:Boolean)=>void,playerId?:String) {
+export function onGameStart(socket:Socket,setMessage:(message:string)=>void,setGame:(game:Game)=>void,setHideCheckReadyBox:(visible:boolean)=>void,setGameEnd:(gameEnde:Boolean)=>void,setTitle:(message:string)=>void,playerId?:String) {
     socket.on("gameStart",(data:Game)=>{
       
         setHideCheckReadyBox(false);
         setGame(data);
         setGameEnd(false);
-        // * Set title with who plays 
+        const title = data.player1?.name + " VS " + data.player2?.name; 
+        setTitle(title);
+        
         // * Set a time out with 'Game Will Start in ...';
+
         if(data.playerAllowed==playerId){
 
           setMessage("It's your time to play");
@@ -60,7 +63,17 @@ export function onGameEnd(socket:Socket,setMessage:(message:string)=>void,setGam
   
     // * end game animatino were
     setGameEnd(true);
-    setMessage('Player -> '+ endGameStatus.playerWin +'|| Next Player -> '+endGameStatus.nextPlayer);
+    console.log(endGameStatus)
+    if(endGameStatus.isDraw){
+      if(endGameStatus.nextPlayers.length==0){
+        setMessage('Its a draw. Other game with same players');
+      }else{
+        setMessage('Its a draw. Next Players -> '+endGameStatus.nextPlayers[0]+ ' and '+ endGameStatus.nextPlayers[1]);
+      }
+    }else{
+      setMessage(endGameStatus.playerWin+ ' Win the game. Next Player is '+ endGameStatus.nextPlayers[0]);
+    }
+    
 
   });
 }
