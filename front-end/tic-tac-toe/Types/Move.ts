@@ -1,4 +1,4 @@
-export default interface Move{
-    positionX:number,
-    positionY:number
-}
+export default interface Move {
+    positionX: number;
+    positionY: number;
+  }

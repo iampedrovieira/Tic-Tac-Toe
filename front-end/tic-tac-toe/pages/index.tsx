@@ -14,28 +14,15 @@ import {
   onPlayerAvailable,
   onPlayerMove,
 } from "./../libs/SocketGame";
+
 import PlayerListComponent from "./../Components/PlayersList/PlayerList";
 import BoardComponent from "./../Components/Board/Board";
 import CheckReadyModal from "./../Components/CheckReady/CheckReadyModal";
 import InputNameModal from "./../Components/InputName/InputNameModal";
 
 import Player from "Types/Player";
-
-interface Game {
-  player1?: Player;
-  player2?: Player;
-  playerAllowed?: string;
-  gameState: number[][];
-}
-interface Move {
-  positionX: number;
-  positionY: number;
-}
-interface ButtonConfig {
-  styles: string;
-  disable: boolean;
-}
-
+import Game from "Types/Game";
+import Move from "Types/Move";
 
 const Home = () => {
  
@@ -44,7 +31,7 @@ const Home = () => {
   const [game, setGame] = useState<Game>();
   const [gameEnd,setGameEnd] = useState<Boolean>(false);
   const [message, setMessage] = useState<string>("Connecting to server");
-  const [title, setTitle] = useState<string>("xxxxxxx - 3 vs 5 - asdasdas");
+  const [title, setTitle] = useState<string>("Waiting for the game to start");
   
   const [name, setName] = useState<string>("");
   const [hideNameBox, setHideNameBox] = useState<boolean>(true);
@@ -114,7 +101,7 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className={styles.container}>
-        <div className={styles.Title}> TIC TAC TOE</div>
+        <div className={styles.Title}> {title}</div>
         <div className={styles.Players}>
           <PlayerListComponent players={playersList} />
         </div>
@@ -150,7 +137,3 @@ interface intialprops{
     socketClient:any
   }
 }
-/*
- TODO DAR MOUNT AO BOARD JA COM SOCKET
-   * COLOCAR A CONEÇÃO AO SERVIDOR COMO SERVERSIDER PROPS [CONNECTA E RECEBE LOGO COMO PROPS NO INICIO DA PAGINA]
-*/

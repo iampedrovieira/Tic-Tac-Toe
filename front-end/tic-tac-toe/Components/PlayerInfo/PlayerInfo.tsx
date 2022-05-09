@@ -1,8 +1,5 @@
-// * This is a component with player info like [ Name  wins draws losses ]
-
-import { Component, useState } from "react";
+import { Component } from "react";
 import Player from "Types/Player";
-import react from "react";
 import styles from "./PlayerInfo.module.css";
 
 interface State {

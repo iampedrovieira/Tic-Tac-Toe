@@ -1,14 +1,19 @@
-import { onWaitingPlayer } from "libs/socketConnection";
 import { Component } from "react";
 import { Socket } from "socket.io-client";
 import BoardState from "Types/BoardState";
-import ButtonConfig from "Types/ButtonConfig";
+
 import Game from "Types/Game";
 import Move from "Types/Move";
 import styles from "../../styles/Home.module.css";
 
 export default class App extends Component<
-  { game: Game; socket: Socket; setMessage: Function; gameEnd: Boolean;handleEmitMove:Function },
+  {
+    game: Game;
+    socket: Socket;
+    setMessage: Function;
+    gameEnd: Boolean;
+    handleEmitMove: Function;
+  },
   BoardState
 > {
   constructor(props: {
@@ -16,7 +21,7 @@ export default class App extends Component<
     socket: Socket;
     setMessage: Function;
     gameEnd: Boolean;
-    handleEmitMove:Function
+    handleEmitMove: Function;
   }) {
     super(props);
     this.state = {
@@ -25,7 +30,7 @@ export default class App extends Component<
       isGameEnd: false,
       setMessage: props.setMessage,
       socket: props.socket,
-      handleEmitMove:props.handleEmitMove,
+      handleEmitMove: props.handleEmitMove,
       buttonsState: [
         [
           { styles: styles.button, disable: true },
@@ -69,8 +74,6 @@ export default class App extends Component<
           ],
         ],
       });
-
-      // ! MENSAGEM AQUI OU NA RECEÇÃO DO SOCKET
     } else {
       let newButtonState = this.state.buttonsState;
       let isAllowed: boolean = false;
@@ -123,7 +126,6 @@ export default class App extends Component<
 
       const move: Move = { positionX, positionY };
       this.state.handleEmitMove(move);
-     
     };
 
     return (

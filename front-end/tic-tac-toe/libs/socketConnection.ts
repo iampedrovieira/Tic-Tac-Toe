@@ -1,8 +1,6 @@
-// * Do logic to connect to socket server with name and other info
-
 import { io, Socket } from "socket.io-client";
 import Player from "Types/Player";
-//* Connecting to server
+
 export async function connectSocket():Promise<Socket>{
 
     let socket = io("http://localhost:8080");
@@ -12,8 +10,11 @@ export async function connectSocket():Promise<Socket>{
      
             resolve(socket);
         });
-     
-        //Colocar aqui para o reject
+
+        // TODO Falta testar isto e mostar algo que deu erro e dar a opção de voltar a connectar
+        socket.on("connect_error", (err) => {
+            reject(err)
+        });
     });
 
     await promiseSocketConnection;
@@ -25,10 +26,8 @@ export async function connectSocket():Promise<Socket>{
 export function emitSendPlayerInfo(socket:Socket,playerName:string):void{
 
     socket.emit("newPlayerJoin",playerName);
-    return
+    return;
 }
-
-// * Waitting for player
 
 export function onWaitingPlayer(socket:Socket,setMessage:(message:string)=>void,){
 
@@ -43,6 +42,8 @@ export function onPlayersChange(socket:Socket,setPlayersList:(players:Player[])=
 
     socket.on('onPlayersChange',(players:Player[])=>{
         setPlayersList(players);
+        return;
     })
+    return;
 }
     
