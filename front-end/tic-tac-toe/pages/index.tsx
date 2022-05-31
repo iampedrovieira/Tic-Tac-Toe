@@ -30,8 +30,8 @@ const Home = () => {
   const [playerId, setPlayerId] = useState<String>();
   const [game, setGame] = useState<Game>();
   const [gameEnd,setGameEnd] = useState<Boolean>(false);
-  const [message, setMessage] = useState<string>("Connecting to server");
-  const [title, setTitle] = useState<string>("Waiting for the game to start");
+  const [message, setMessage] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
   
   const [name, setName] = useState<string>("");
   const [hideNameBox, setHideNameBox] = useState<boolean>(true);
@@ -39,6 +39,7 @@ const Home = () => {
   const [checkBox, setCheckBox] = useState<boolean>(false);
   const [playersList, setPlayersList] = useState<Player[]>([]);
 
+  // Socket server connection
   useEffect(() => {
     async function connection() {
      const socketClient = await connectSocket();
@@ -46,35 +47,24 @@ const Home = () => {
     }
     connection();
   },[]);
+
   //This is run when player is connected to server
   useEffect(() => {
-    //This create a listener to startGame entry.
+  
     if (!socket) return;
     setPlayerId(socket.id);
-    onPlayerAvailable(socket, setHideCheckReadyBox, setCheckBox);
+    onPlayerAvailable(socket, setHideCheckReadyBox, setCheckBox,setMessage);
     setHideNameBox(true);
     onWaitingPlayer(socket, setMessage);
     onPlayersChange(socket, setPlayersList);
     onGameEnd(socket,setMessage,setGameEnd);
-    onGameStart(
-      socket,
-      setMessage,
-      setGame,
-      setHideCheckReadyBox,
-      setGameEnd,
-      setTitle,
-      playerId
-    );
-    //player move
+    onGameStart(socket,setMessage,setGame,setHideCheckReadyBox,setGameEnd,setTitle,playerId);
     onPlayerMove(socket,setGame,setMessage)    
   
   }, [socket]);
 
   function handleName(): void {
     if (!name) return;
-    /*  
-    //* Send name to sever and change the flow on back end to only stay in 'waiting' when name have been sended
-    */
     if (!socket) return;
     emitSendPlayerInfo(socket, name);
     setHideNameBox(false);
@@ -131,10 +121,3 @@ const Home = () => {
 };
 
 export default Home;
-
-
-interface intialprops{
-  props:{
-    socketClient:any
-  }
-}

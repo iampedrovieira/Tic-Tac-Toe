@@ -78,8 +78,6 @@ export default class App extends Component<
       let newButtonState = this.state.buttonsState;
       let isAllowed: boolean = false;
       if (_newProps.game.playerAllowed == this.state.playerId) isAllowed = true;
-      if (isAllowed) this.state.setMessage("Its your time to play");
-      if (!isAllowed) this.state.setMessage("Wait for other player move");
 
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
