@@ -13,7 +13,13 @@
         - [ ] Create css to componentes like board buttons.
         - [ ] Define themes [Dark first].
         - [ ] Define a font. 
-
+* Global
+    - [ ] ENV
+    - [ ] Setup a deploy/dev structure with docker
+        - [ ] Front-end container
+        - [ ] Back-end container
+    - [ ] Create a CI/CD with test
+    
 - [ ] (Not important improvements)
     * Front-end
         - [ ] Login input check if is valid.
