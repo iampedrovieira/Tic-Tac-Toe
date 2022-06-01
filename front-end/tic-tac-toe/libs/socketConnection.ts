@@ -10,8 +10,7 @@ export async function connectSocket():Promise<Socket>{
      
             resolve(socket);
         });
-
-        // TODO Falta testar isto e mostar algo que deu erro e dar a opção de voltar a connectar
+        
         socket.on("connect_error", (err) => {
             reject(err)
         });

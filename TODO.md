@@ -2,8 +2,8 @@
     - [x] finish/improve msg
     - [x] when game end, block buttons but dont clear board
     - [ ] ...
-    - [ ] Clean code
-        - [ ] libs, page and components.
+    - [x] Clean code
+        - [x] libs, page and components.
     - [ ] Create a button component structure
     - [ ] Improve page structure
         - [ ] "Login" modal, change backgrond or dont relaod page unitl login.

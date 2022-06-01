@@ -49,18 +49,17 @@ export function onGameStart(socket:Socket,setMessage:(message:string)=>void,setG
         setGameEnd(false);
         const title = data.player1?.name + " VS " + data.player2?.name; 
         setTitle(title);
-        
-        // * Set a time out with 'Game Will Start in ...';
 
-        if(data.playerAllowed==playerId){
-
-          setMessage("It's your time to play");
-        
+        if(socket.id == data.playerAllowed) setMessage("It's your time to play");
+        if(socket.id != data.player1?.id && socket.id != data.player2?.id){
+          if(data.playerAllowed == data.player1?.id){
+            setMessage("It's " + data.player1?.name + " turn to play");
+          }else{
+            setMessage("It's " + data.player2?.name + " turn to play");
+          }
         }else{
-
-          setMessage("Wait for other player move");
-        
-        }
+          if(socket.id != data.playerAllowed) setMessage("Wait for other player move");
+        } 
       })
     
 }
@@ -69,7 +68,6 @@ export function onGameEnd(socket:Socket,setMessage:(message:string)=>void,setGam
 
   socket.on("gameEnd",(endGameStatus:EndGameStatus)=>{
   
-    // * end game animatino were
     setGameEnd(true);
     console.log(endGameStatus)
     if(endGameStatus.isDraw){
@@ -79,7 +77,7 @@ export function onGameEnd(socket:Socket,setMessage:(message:string)=>void,setGam
         setMessage('Its a draw. Next Players -> '+endGameStatus.nextPlayers[0]+ ' and '+ endGameStatus.nextPlayers[1]);
       }
     }else{
-      setMessage(endGameStatus.playerWin+ ' Win the game. Next Player is '+ endGameStatus.nextPlayers[0]);
+      setMessage(endGameStatus.playerWin+ ' Win the game. Next Player is '+ endGameStatus.nextPlayers[1]);
     }
     
 

@@ -34,7 +34,7 @@ const Home = () => {
   const [title, setTitle] = useState<string>("");
   
   const [name, setName] = useState<string>("");
-  const [hideNameBox, setHideNameBox] = useState<boolean>(true);
+  const [hideNameBox, setHideNameBox] = useState<boolean>(false);
   const [hideCheckReadyBox, setHideCheckReadyBox] = useState<boolean>(false);
   const [checkBox, setCheckBox] = useState<boolean>(false);
   const [playersList, setPlayersList] = useState<Player[]>([]);
@@ -42,8 +42,13 @@ const Home = () => {
   // Socket server connection
   useEffect(() => {
     async function connection() {
-     const socketClient = await connectSocket();
-      setSocket(socketClient)
+      try{
+        const socketClient = await connectSocket();
+        setSocket(socketClient)
+        setHideNameBox(true)
+      }catch{
+        
+      }
     }
     connection();
   },[]);
