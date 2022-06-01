@@ -58,19 +58,19 @@ export default class App extends Component<
       this.setState({
         buttonsState: [
           [
-            { styles: styles.button, disable: true },
-            { styles: styles.button, disable: true },
-            { styles: styles.button, disable: true },
+            { styles: this.state.buttonsState[0][0].styles, disable: true },
+            { styles: this.state.buttonsState[0][1].styles, disable: true },
+            { styles: this.state.buttonsState[0][2].styles, disable: true },
           ],
           [
-            { styles: styles.button, disable: true },
-            { styles: styles.button, disable: true },
-            { styles: styles.button, disable: true },
+            { styles: this.state.buttonsState[1][0].styles, disable: true },
+            { styles: this.state.buttonsState[1][1].styles, disable: true },
+            { styles: this.state.buttonsState[1][2].styles, disable: true },
           ],
           [
-            { styles: styles.button, disable: true },
-            { styles: styles.button, disable: true },
-            { styles: styles.button, disable: true },
+            { styles: this.state.buttonsState[2][0].styles, disable: true },
+            { styles: this.state.buttonsState[2][1].styles, disable: true },
+            { styles: this.state.buttonsState[2][2].styles, disable: true },
           ],
         ],
       });

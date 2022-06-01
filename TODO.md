@@ -1,6 +1,6 @@
 * Front-end [MAIN CHANGES]
     - [x] finish/improve msg
-    - [ ] when game end, block buttons but dont clear board
+    - [x] when game end, block buttons but dont clear board
     - [ ] ...
     - [ ] Clean code
         - [ ] libs, page and components.
