@@ -36,10 +36,10 @@ module.exports = (
             isDraw: false,
             playerWinId: players[0].getId(),
             playerLossId: "",
-            playerNextId: players[1].getId(),
-            nextPlayer: players[1].getName(),
+            playerNextIds: [players[0].getId(),players[1].getId()],
+            nextPlayers: [players[0].getName(),players[1].getName()]
           };
-
+          
           io.emit("gameEnd", gameEndStatus);
 
           setTimeout(() => {
