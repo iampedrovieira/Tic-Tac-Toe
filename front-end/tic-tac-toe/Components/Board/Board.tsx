@@ -4,7 +4,7 @@ import BoardState from "Types/BoardState";
 
 import Game from "Types/Game";
 import Move from "Types/Move";
-import styles from "../../styles/Home.module.css";
+import styles from "./Board.module.css";
 
 export default class App extends Component<
   {

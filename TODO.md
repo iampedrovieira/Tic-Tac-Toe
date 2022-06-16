@@ -3,15 +3,16 @@
     - [x] when game end, block buttons but dont clear board
     - [ ] ...
     - [x] Clean code
+    - [ ] Fixed page when have 1 or dont have game eat.
         - [x] libs, page and components.
     - [ ] Create a button component structure
     - [ ] Improve page structure
         - [ ] "Login" modal, change backgrond or dont relaod page unitl login.
     - [ ] Styles
-        - [ ] Create a struture, global and clean CSS
-        - [ ] Finish page structure without beutifull CSS [Desktop first].
-        - [ ] Create css to componentes like board buttons.
         - [ ] Define themes [Dark first].
+        - [X] Create a struture, global and clean CSS
+        - [X] Finish page structure without beutifull CSS [Desktop first].
+        - [ ] Create css to componentes like board buttons.
         - [ ] Define a font. 
 * Global
     - [ ] ENV
