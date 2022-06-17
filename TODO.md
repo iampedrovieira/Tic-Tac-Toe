@@ -3,7 +3,7 @@
     - [x] when game end, block buttons but dont clear board
     - [ ] ...
     - [x] Clean code
-    - [ ] Fixed page when have 1 or dont have game eat.
+    - [ ] Fixed page when have 1 or dont have game yet.
         - [x] libs, page and components.
     - [X] Create a button component structure
     - [ ] Improve page structure
