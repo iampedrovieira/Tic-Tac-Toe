@@ -137,14 +137,14 @@ const Home = () => {
           losses:0,
         },
         player2:{
-          id:'String',
+          id:'String2',
           name:'String 2',
           option:2,
           wins:0,
           losses:0,
         },
         playerAllowed: 'String1',
-        gameState:[[0,0,0],[0,0,0],[0,0,0]]
+        gameState:[[-1,-1,-1],[-1,-1,-1],[0,0,0]]
       })
       setSocket(io())
       try{
@@ -162,7 +162,7 @@ const Home = () => {
   useEffect(() => {
   
     if (!socket) return;
-    setPlayerId(socket.id);
+    setPlayerId('String1');
     onPlayerAvailable(socket, setHideCheckReadyBox, setCheckBox,setMessage);
     //setHideNameBox(true);
     onWaitingPlayer(socket, setMessage);

@@ -5,7 +5,7 @@
     - [x] Clean code
     - [ ] Fixed page when have 1 or dont have game eat.
         - [x] libs, page and components.
-    - [ ] Create a button component structure
+    - [X] Create a button component structure
     - [ ] Improve page structure
         - [ ] "Login" modal, change backgrond or dont relaod page unitl login.
     - [ ] Styles

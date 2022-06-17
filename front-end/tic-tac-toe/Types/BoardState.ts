@@ -4,6 +4,7 @@ import Game from "./Game";
 
 export default interface BoardState{
     playerId:string,
+    playerOption:number,
     game:Game,
     isGameEnd:Boolean,
     setMessage:Function,
