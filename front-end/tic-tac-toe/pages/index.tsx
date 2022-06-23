@@ -99,7 +99,7 @@ const Home = () => {
           { socket && game &&
             <BoardComponent game={game} socket={socket} setMessage = {setMessage} handleEmitMove={handleEmitMove} gameEnd={gameEnd}/>
           } 
-          <div> {message}</div>
+          <div className={styles.message}> {message}</div>
         </div>
         <InputNameModal
         open={hideNameBox}

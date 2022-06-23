@@ -5,7 +5,10 @@
   width: 10vw;
   height: 0;
   padding-bottom : 10vw;
-  border: 1px solid white;
+}
+
+.button{
+  background-color: #252525;
 }
 
 .player1{

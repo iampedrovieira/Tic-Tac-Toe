@@ -1,19 +1,20 @@
-.container {  
+.container { 
+  background-color: #252525;
   display: grid;
   height: 100%;
   height: 100%;
   grid-template-columns: 25% 75%;
-  grid-template-rows: 10% 90%;
+  grid-template-rows: 10% 85%;
   gap: 0px 0px;
   grid-auto-flow: row;
   grid-template-areas:
     "Title Title"
     "Players Game";
-  
 }
 
 .Title { 
-  grid-area: Title; 
+  grid-area: Title;
+  color: #F2F4FB; 
   align-self: center;
   margin-left: auto;
   margin-right: auto;
@@ -24,6 +25,7 @@
 }
 
 .Game {
+  background-color: #252525;
   grid-area: Game;
   display: flex;
   flex-direction: column;
@@ -33,3 +35,7 @@
   width: 100%;
   align-self: center;
 }
+.message{
+  color: #F2F4FB;
+}
+ 

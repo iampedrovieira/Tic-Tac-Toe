@@ -3,17 +3,25 @@
     - [x] when game end, block buttons but dont clear board
     - [ ] ...
     - [x] Clean code
-    - [ ] Fixed page when have 1 or dont have game yet.
+    - [X] Fixed page when have 1 or dont have game yet.
         - [x] libs, page and components.
     - [X] Create a button component structure
     - [ ] Improve page structure
         - [ ] "Login" modal, change backgrond or dont relaod page unitl login.
     - [ ] Styles
-        - [ ] Define themes [Dark first].
+        - [ ] Define gloabl color, size and font (inside 1 file like theme)
+        - [ ] Styling player component.
+        - [ ] Define a font.
+        - [ ] Board.
+            - [ ] Buttons styles wiht X and O.
+            - [ ] Board Background.
+        - [ ] Styling modal.
+            - [ ] Box.
+            - [ ] Input and button.
         - [X] Create a struture, global and clean CSS
         - [X] Finish page structure without beutifull CSS [Desktop first].
-        - [ ] Create css to componentes like board buttons.
-        - [ ] Define a font. 
+        - [X] Create css to componentes like board buttons.
+        
 * Global
     - [ ] ENV
     - [ ] Setup a deploy/dev structure with docker
