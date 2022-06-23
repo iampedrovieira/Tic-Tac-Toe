@@ -10,7 +10,7 @@
         - [ ] "Login" modal, change backgrond or dont relaod page unitl login.
     - [ ] Styles
         - [X] Define gloabl color, size and font (inside 1 file like theme)
-        - [ ] Styling player component.
+        - [X] Styling player component.
         - [ ] Define a font.
         - [ ] Board.
             - [ ] Buttons styles wiht X and O.

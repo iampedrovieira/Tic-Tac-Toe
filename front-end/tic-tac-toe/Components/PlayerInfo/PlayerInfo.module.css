@@ -7,6 +7,8 @@
      justify-content: space-around;
      /*border-bottom: 1px dashed #1C6EA4;
      /* border-radius: 5px; */
+     border-bottom: 1px dashed var(--TEXT-PRIMARY-COLOR-WHITE);
+    
 }
 
 .name{
