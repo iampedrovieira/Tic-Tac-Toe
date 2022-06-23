@@ -12,9 +12,11 @@
         - [X] Define gloabl color, size and font (inside 1 file like theme)
         - [X] Styling player component.
         - [ ] Define a font.
-        - [ ] Board.
-            - [ ] Buttons styles wiht X and O.
-            - [ ] Board Background.
+            - [ ] Style a title.
+            - [ ] Define a message and other text.
+        - [X] Board.
+            - [X] Buttons styles wiht X and O.
+            - [X] Board Background.
         - [ ] Styling modal.
             - [ ] Box.
             - [ ] Input and button.
