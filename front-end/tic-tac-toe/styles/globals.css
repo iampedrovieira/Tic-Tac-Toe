@@ -41,8 +41,8 @@ body {
   --PRIMARY-COLOR-BLACK:#252525;
   --SECONDARY-COLOR-WHITE:#EEEEEE;
   --TEXT-PRIMARY-COLOR-WHITE:#F2F4FB;
-  --PLAYER1-COLOR:blue;
-  --PLAYER2-COLOR:red;
+  --PLAYER1-COLOR:#0466c8;
+  --PLAYER2-COLOR:#ba181b;
   --PLAYER-UNCHECK-COLOR:rgb(231, 243, 0);
   --PLAYER-CHECK-COLOR:rgb(73, 243, 0);
   --PLAYER-SPECTATOR-COLOR:rgb(109, 109, 109);
@@ -50,4 +50,8 @@ body {
   /* Fonts */
 
   /*Sizes*/
+}
+
+.board-svg{
+  stroke:var(--SECONDARY-COLOR-WHITE);
 }

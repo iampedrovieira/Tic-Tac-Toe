@@ -24,7 +24,7 @@
   margin-left: 0.5%;
   height: 1rem;
   width: 1rem;
-  background-color: var(--PLAYER1-COLOR); 
+  background-image: url('../GameButton/button-X.svg');
   border-radius: 50%;
 }
 
@@ -36,7 +36,7 @@
   margin-left: 0.5%;
   height: 1rem;
   width: 1rem;
-  background-color: var(--PLAYER2-COLOR);
+  background-image: url('../GameButton/button-O.svg');
   border-radius: 50%;
 }
 

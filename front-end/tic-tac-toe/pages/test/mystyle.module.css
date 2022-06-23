@@ -25,7 +25,6 @@
 }
 
 .Game {
-  background-color: var(--PRIMARY-COLOR-BLACK);
   grid-area: Game;
   display: flex;
   flex-direction: column;

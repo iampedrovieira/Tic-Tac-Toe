@@ -12,10 +12,10 @@
 }
 
 .player1{
-  background-color: var(--PLAYER1-COLOR);
+  background-image: url('./button-X.svg');
 }
 
 .player2{
-  background-color: var(--PLAYER2-COLOR);
+  background-image: url('./button-O.svg');
 
 }
