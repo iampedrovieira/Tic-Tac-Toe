@@ -8,14 +8,14 @@
 }
 
 .button{
-  background-color: #252525;
+  background-color: var(--PRIMARY-COLOR-BLACK);
 }
 
 .player1{
-  background-color: blue;
+  background-color: var(--PLAYER1-COLOR);
 }
 
 .player2{
-  background-color: red;
+  background-color: var(--PLAYER2-COLOR);
 
 }

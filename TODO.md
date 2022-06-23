@@ -9,7 +9,7 @@
     - [ ] Improve page structure
         - [ ] "Login" modal, change backgrond or dont relaod page unitl login.
     - [ ] Styles
-        - [ ] Define gloabl color, size and font (inside 1 file like theme)
+        - [X] Define gloabl color, size and font (inside 1 file like theme)
         - [ ] Styling player component.
         - [ ] Define a font.
         - [ ] Board.
