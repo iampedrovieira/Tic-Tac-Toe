@@ -35,7 +35,7 @@ const Home = () => {
   const [title, setTitle] = useState<string>(" titulo cenas vs tedasd");
   
   const [name, setName] = useState<string>("");
-  const [hideNameBox, setHideNameBox] = useState<boolean>(false);
+  const [hideNameBox, setHideNameBox] = useState<boolean>(true);
   const [hideCheckReadyBox, setHideCheckReadyBox] = useState<boolean>(false);
   const [checkBox, setCheckBox] = useState<boolean>(false);
   const [playersList, setPlayersList] = useState<Player[]>([]);
@@ -196,7 +196,9 @@ const Home = () => {
 
   return (
       <div className={styles.container}>
-        <div className={styles.Title}> {title}</div>
+        <div className={styles.Title}> 
+          <h1>{title}</h1>
+        </div>
         <div className={styles.Players}>
           <PlayerListComponent players={playersList} />
         </div>
@@ -204,7 +206,10 @@ const Home = () => {
           { socket && game &&
             <BoardComponent game={game} socket={socket} setMessage = {setMessage} handleEmitMove={handleEmitMove} gameEnd={gameEnd}/>
           } 
-          <div className={styles.message}> {message}</div>
+          <div className={styles.message}> 
+          <h3> {message}
+            </h3>
+            </div>
         </div>
         <InputNameModal
         open={hideNameBox}

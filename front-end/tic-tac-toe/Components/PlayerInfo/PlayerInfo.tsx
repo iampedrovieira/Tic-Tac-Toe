@@ -41,10 +41,13 @@ export default class PlayerInfo extends Component<{ player: Player }, State> {
   render() {
     return (
       <div className={styles.main_box}>
-        <div className={styles.name}>
-          <p> {this.props.player.name}</p>
+        <div className={styles.player_info}>
+          <div className={styles.name}>
+            <h4> {this.props.player.name}</h4>
+          </div>
+          <span className={this.state.styleOption}></span>
         </div>
-        <span className={this.state.styleOption}></span>
+        <div className={styles.separator}></div>
       </div>
     );
   }

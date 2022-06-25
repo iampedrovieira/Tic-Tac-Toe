@@ -1,19 +1,8 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
+import styles from "./CheckReadyModal.module.css";
 
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
- 
+
 interface propsInput {
   'open':boolean,
   'setOpen':(isOpen:boolean) =>void,
@@ -39,14 +28,15 @@ export default class CheckReadyModal extends
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
-          <h1> Set Ready !</h1>
-        <input
-          type="checkbox"
-          checked={this.props.check}
-          onChange={this.props.onChangeCheck}
-        />
-        </Box>
+         <div className={styles.box}>
+            <h2 className={styles.text}>Set Ready</h2>
+              <input
+                className={styles.input} 
+                type="checkbox"
+                checked={this.props.check}
+                onChange={this.props.onChangeCheck}
+            />
+          </div>
       </Modal>
   );
   }

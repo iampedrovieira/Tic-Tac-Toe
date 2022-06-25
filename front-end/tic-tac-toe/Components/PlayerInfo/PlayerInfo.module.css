@@ -1,14 +1,23 @@
 .main_box{
-     /* background-color: yellow; */
      height: 100%;
      width: 100%;
      display: flex;
-     flex-direction: row;
-     justify-content: space-around;
-     /*border-bottom: 1px dashed #1C6EA4;
-     /* border-radius: 5px; */
-     border-bottom: 1px dashed var(--TEXT-PRIMARY-COLOR-WHITE);
-    
+     flex-direction: column;
+}
+
+.player_info{
+  height: 90%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content:space-around;
+}
+
+.separator{
+  align-self: center;
+  height: 9%;
+  width: 80%;
+  background-image: url('./Line-separator.svg');
 }
 
 .name{

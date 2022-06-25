@@ -1,18 +1,6 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
+import styles from "./InputNameModal.module.css";
  
 interface propsInput {
   'open':boolean,
@@ -35,19 +23,19 @@ export default class CheckReadyModal extends
     }
     return (
       <Modal
+        className={styles.modal_main}
         open={this.props.open}
         onClose={handelClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
-        <p> Insert your name </p>
-        <input type="text" value={this.props.name} 
-            onChange={(event)=>this.props.setName(event.target.value)} />
-        <button onClick={()=>this.props.onHandleName()}> DONE </button>
-        </Box>
+        <div className={styles.box}>
+          <h2 className={styles.text}> Insert your name </h2>
+          <input className={styles.input} type="text" value={this.props.name} 
+              onChange={(event)=>this.props.setName(event.target.value)} />
+          <button className={styles.button} onClick={()=>this.props.onHandleName()}> DONE </button>
+        </div>
       </Modal>
   );
   }
-  
 }

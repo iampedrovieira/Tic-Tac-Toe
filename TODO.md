@@ -6,20 +6,20 @@
     - [X] Fixed page when have 1 or dont have game yet.
         - [x] libs, page and components.
     - [X] Create a button component structure
-    - [ ] Improve page structure
-        - [ ] "Login" modal, change backgrond or dont relaod page unitl login.
+    - [X] Improve page structure
+        - [X] "Login" modal, change backgrond or dont relaod page unitl login.
     - [ ] Styles
         - [X] Define gloabl color, size and font (inside 1 file like theme)
         - [X] Styling player component.
-        - [ ] Define a font.
-            - [ ] Style a title.
-            - [ ] Define a message and other text.
+        - [X] Define a font.
+            - [X] Style a title.
+            - [X] Define a message and other text.
         - [X] Board.
             - [X] Buttons styles wiht X and O.
             - [X] Board Background.
-        - [ ] Styling modal.
-            - [ ] Box.
-            - [ ] Input and button.
+        - [X] Styling modal.
+            - [X] Box.
+            - [X] Input and button.
         - [X] Create a struture, global and clean CSS
         - [X] Finish page structure without beutifull CSS [Desktop first].
         - [X] Create css to componentes like board buttons.
