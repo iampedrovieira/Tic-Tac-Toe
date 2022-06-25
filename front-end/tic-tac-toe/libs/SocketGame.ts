@@ -77,7 +77,7 @@ export function onGameEnd(socket:Socket,setMessage:(message:string)=>void,setGam
         setMessage('Its a draw. Next Players -> '+endGameStatus.nextPlayers[0]+ ' and '+ endGameStatus.nextPlayers[1]);
       }
     }else{
-      setMessage(endGameStatus.playerWin+ ' Win the game. Next Player is '+ endGameStatus.nextPlayers[1]);
+      setMessage(endGameStatus.playerWin+ ' Win the game. Next Player is '+ endGameStatus.nextPlayers[0]);
     }
     
 

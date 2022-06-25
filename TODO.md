@@ -23,6 +23,7 @@
         - [X] Create a struture, global and clean CSS
         - [X] Finish page structure without beutifull CSS [Desktop first].
         - [X] Create css to componentes like board buttons.
+        - [ ] BUGFIX, when player 2 win, on next game style with same 0 on hover
         
 * Global
     - [ ] ENV
