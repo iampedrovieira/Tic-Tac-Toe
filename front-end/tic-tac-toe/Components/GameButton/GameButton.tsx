@@ -50,7 +50,7 @@ export default class GameButton extends
     let newState = {
       isDisable : _newProps.isDisable,
       option:_newProps.option,
-      playerOption:this.state.playerOption,
+      playerOption:_newProps.playerOption,
       style:style,
       event: this.state.event
     }

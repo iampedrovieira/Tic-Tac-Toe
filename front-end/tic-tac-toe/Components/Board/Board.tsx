@@ -85,6 +85,16 @@ export default class Board extends Component<
     } else {
       let newButtonState = this.state.buttonsState;
       let isAllowed: boolean = false;
+
+      let playerOption:number
+      if(this.state.socket.id == _newProps.game.player1?.id ){
+        playerOption = 0
+      }else{
+        playerOption = 1
+      }
+      
+      this.setState({playerOption: playerOption });
+
       if (_newProps.game.playerAllowed == this.state.playerId) isAllowed = true;
 
       for (let i = 0; i < 3; i++) {
@@ -102,7 +112,6 @@ export default class Board extends Component<
         }
       }
       this.setState({ game: _newProps.game });
-      console.table(this.state.game)
     }
   }
   render() {
