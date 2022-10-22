@@ -11,7 +11,8 @@ describe("Sockets Disconnection Tests", () => {
   let players: Player[];
   let games: Game[];
   let playersCheck: Map<string, boolean>;
-
+  const serverPort = 8081;
+  const socketServerUrl = "http://localhost:8081";
   beforeAll((done) => {
     players = [];
     games = [];
@@ -19,14 +20,14 @@ describe("Sockets Disconnection Tests", () => {
     playersCheck = new Map<string, boolean>();
     express = require("express");
     app = express();
-    ioServer = require("../Connections/SocketConnection")(app, 8081);
+    ioServer = require("../Connections/SocketConnection")(app, serverPort);
     require("../Modules/SocketListeners")(
       ioServer,
       players,
       games,
       playersCheck
     );
-    socketClientEmmitter = io("http://localhost:8081");
+    socketClientEmmitter = io(socketServerUrl);
     socketClientEmmitter.on("connect", () => {
       done();
     });
@@ -53,13 +54,13 @@ describe("Sockets Disconnection Tests", () => {
   test("[Client Side] When player leaves during the game but not playing ", (done) => {
     socketClientEmmitter.emit("newPlayerJoin", "Player 1");
 
-    const socketClient = io("http://localhost:8081");
+    const socketClient = io(socketServerUrl);
     socketClient.on("connect", () => {
       socketClient.on("playerAvailable", () => {
         const game: Game = new Game(players[0], players[1]);
         games.push(game);
 
-        const socketClient2 = io("http://localhost:8081");
+        const socketClient2 = io(socketServerUrl);
         socketClient2.on("connect", () => {
           socketClient2.on("gameStart", (game) => {
             socketClient.on("onPlayersChange", () => {
@@ -83,12 +84,12 @@ describe("Sockets Disconnection Tests", () => {
   test("[Client Side] When player leaves during the game and is playing ", (done) => {
     socketClientEmmitter.emit("newPlayerJoin", "Player 1");
 
-    const socketClient = io("http://localhost:8081");
+    const socketClient = io(socketServerUrl);
     socketClient.on("connect", () => {
       socketClient.on("playerAvailable", () => {
         const game: Game = new Game(players[0], players[1]);
         games.push(game);
-        const socketClient2 = io("http://localhost:8081");
+        const socketClient2 = io(socketServerUrl);
         socketClient2.on("connect", () => {
           socketClient2.on("gameStart", (game) => {
             socketClient2.on("playerAvailable", () => {
@@ -110,10 +111,10 @@ describe("Sockets Disconnection Tests", () => {
   });
 
   test("[Client Side - waitingPlayer] When player leaves during the game and dont exist 2 or more players on the server", (done) => {
-    const socketClient = io("http://localhost:8081");
+    const socketClient = io(socketServerUrl);
     socketClient.on("connect", () => {
       socketClient.on("onPlayersChange", () => {
-        const socketClient2 = io("http://localhost:8081");
+        const socketClient2 = io(socketServerUrl);
         socketClient2.on("connect", () => {
           socketClient2.on("onPlayersChange", () => {
             socketClient2.on("waitingPlayer", (arg: string) => {

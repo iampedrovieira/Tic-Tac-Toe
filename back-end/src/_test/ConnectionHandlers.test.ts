@@ -8,11 +8,12 @@ describe("Sockets Connection Tests", () => {
   let express: any;
   let app: any;
   let ioServer: any;
-  let socketServer: Socket; //This is used to recive emits from client to server
   let socketClientEmmitter: Socket; //This is used to emit to server and use in functions
   let players: Player[];
   let games: Game[];
   let playersCheck: Map<string, boolean>;
+  const serverPort = 8081;
+  const socketServerUrl = "http://localhost:8081";
 
   beforeAll((done) => {
     players = [];
@@ -21,14 +22,14 @@ describe("Sockets Connection Tests", () => {
     playersCheck = new Map<string, boolean>();
     express = require("express");
     app = express();
-    ioServer = require("../Connections/SocketConnection")(app, 8081);
+    ioServer = require("../Connections/SocketConnection")(app, serverPort);
     require("../Modules/SocketListeners")(
       ioServer,
       players,
       games,
       playersCheck
     );
-    socketClientEmmitter = io("http://localhost:8081");
+    socketClientEmmitter = io(socketServerUrl);
     socketClientEmmitter.on("connect", () => {
    
       done();
@@ -80,7 +81,7 @@ describe("Sockets Connection Tests", () => {
     });
 
     test("[Client Side - waitingPlayer] First Player join", (done) => {
-      const socketClient = io("http://localhost:8081");
+      const socketClient = io(socketServerUrl);
       socketClient.on("connect", () => {
         socketClient.on("waitingPlayer", (arg: string) => {
           expect(arg).toBe("Waiting for player");
@@ -114,7 +115,7 @@ describe("Sockets Connection Tests", () => {
       done();
     });
     test("[Client Side - playerAvailable] Second Player Join", (done) => {
-      const socketClient = io("http://localhost:8081");
+      const socketClient = io(socketServerUrl);
       socketClient.on("connect", () => {
         socketClient.on("playerAvailable", (arg: string) => {
           expect(players.length).toBe(2);
@@ -128,8 +129,8 @@ describe("Sockets Connection Tests", () => {
 
     test("[Client Side] Third Player Join without Game", (done) => {
       socketClientEmmitter.emit("newPlayerJoin", "Player 1");
-      const socketClient = io("http://localhost:8081");
-      const socketClient2 = io("http://localhost:8081");
+      const socketClient = io(socketServerUrl);
+      const socketClient2 = io(socketServerUrl);
       socketClient.on("connect", () => {
         socketClient.emit("newPlayerJoin", "Player 2");
       });
@@ -146,8 +147,8 @@ describe("Sockets Connection Tests", () => {
     });
     test("[Client Side] all players received a onPlayersChange", (done) => {
       socketClientEmmitter.emit("newPlayerJoin", "Player 1");
-      const socketClient = io("http://localhost:8081");
-      const socketClient2 = io("http://localhost:8081");
+      const socketClient = io(socketServerUrl);
+      const socketClient2 = io(socketServerUrl);
       let firstSocketReceived = false;
       let secondSocketReceived = false;
 
@@ -177,7 +178,7 @@ describe("Sockets Connection Tests", () => {
     test("[Client Side] Third Player Join with Game", (done) => {
       socketClientEmmitter.emit("newPlayerJoin", "Player 1");
 
-      const socketClient = io("http://localhost:8081");
+      const socketClient = io(socketServerUrl);
 
       let clientHasReceivedPlayersChange = false;
       let client2HasReceivedPlayersChange = false;
@@ -191,7 +192,7 @@ describe("Sockets Connection Tests", () => {
           const game: Game = new Game(players[0], players[1]);
           games.push(game);
           let gameReceive: Game;
-          const socketClient2 = io("http://localhost:8081");
+          const socketClient2 = io(socketServerUrl);
           socketClient2.on("connect", () => {
             socketClient2.on("gameStart", (game) => {
               client2HasReceivedGame = true;
@@ -254,7 +255,7 @@ describe("Sockets Connection Tests", () => {
     });
 
     test("[Client Side - onPlayersChange] Player receive a check update", (done) => {
-      const socketClient = io("http://localhost:8081");
+      const socketClient = io(socketServerUrl);
       socketClient.on("connect", () => {
         socketClient.on("onPlayersChange", (playersResponse) => {
           expect(playersCheck.get(socketClientEmmitter.id)).toBeFalsy;
@@ -300,7 +301,7 @@ describe("Sockets Connection Tests", () => {
       done();
     });
     test("[Client Side] First Player Check", (done) => {
-      const socketClient = io("http://localhost:8081");
+      const socketClient = io(socketServerUrl);
       socketClient.on("connect", () => {
         socketClient.emit("newPlayerJoin", "Player 2");
         socketClient.on("onPlayersChange", () => {
@@ -313,7 +314,7 @@ describe("Sockets Connection Tests", () => {
     });
 
     test("[Server Side] Second Player Check without game", (done) => {
-      const socketClient = io("http://localhost:8081");
+      const socketClient = io(socketServerUrl);
       socketClient.on("connect", () => {
         const player2 = new Player(socketClient.id, "Player 2");
         players.push(player2);
@@ -338,7 +339,7 @@ describe("Sockets Connection Tests", () => {
       });
     });
     test("[Server Side] Second Player Check with game", (done) => {
-      const socketClient = io("http://localhost:8081");
+      const socketClient = io(socketServerUrl);
       socketClient.on("connect", () => {
         const player2 = new Player(socketClient.id, "Player 2");
         players.push(player2);
@@ -364,7 +365,7 @@ describe("Sockets Connection Tests", () => {
       });
     });
     test("[Client Side gameStart] Second Player Check ", (done) => {
-      const socketClient = io("http://localhost:8081");
+      const socketClient = io(socketServerUrl);
       socketClient.on("connect", () => {
         const player2 = new Player(socketClient.id, "Player 2");
         players.push(player2);

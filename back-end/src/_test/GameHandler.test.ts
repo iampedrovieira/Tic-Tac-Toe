@@ -14,6 +14,8 @@ describe("Sockets Game Tests", () => {
   let players: Player[];
   let games: Game[];
   let playersCheck: Map<string, boolean>;
+  const serverPort = 8081;
+  const socketServerUrl = "http://localhost:8081";
 
   beforeAll((done) => {
     players = [];
@@ -22,14 +24,14 @@ describe("Sockets Game Tests", () => {
     playersCheck = new Map<string, boolean>();
     express = require("express");
     app = express();
-    ioServer = require("../Connections/SocketConnection")(app, 8081);
+    ioServer = require("../Connections/SocketConnection")(app, serverPort);
     require("../Modules/SocketListeners")(
       ioServer,
       players,
       games,
       playersCheck
     );
-    socketClientEmmitter = io("http://localhost:8081");
+    socketClientEmmitter = io(socketServerUrl);
     socketClientEmmitter.on("connect", () => {
       done();
     });
@@ -43,10 +45,10 @@ describe("Sockets Game Tests", () => {
   });
 
   beforeEach((done) => {
-    socketClient1 = io("http://localhost:8081");
+    socketClient1 = io(socketServerUrl);
     socketClient1.on("connect", () => {
       players.push(new Player(socketClient1.id, "Player 1"));
-      socketClient2 = io("http://localhost:8081");
+      socketClient2 = io(socketServerUrl);
       socketClient2.on("connect", () => {
         players.push(new Player(socketClient2.id, "Player 2"));
         games.push(new Game(players[0], players[1]));
@@ -72,7 +74,7 @@ describe("Sockets Game Tests", () => {
     socketClient2.emit("playerMove", move);
   });
   test("[Client Side] When player 1 win a game ", (done) => {
-    const socketClient3 = io("http://localhost:8081");
+    const socketClient3 = io(socketServerUrl);
 
     socketClient3.on("connect", () => {
       players.push(new Player(socketClient3.id, "Player 3"));
@@ -125,7 +127,7 @@ describe("Sockets Game Tests", () => {
     socketClient1.emit("playerMove", { positionX: 2, positionY: 2 });
   });
   test("[Client Side] When player 2 win a game ", (done) => {
-    const socketClient3 = io("http://localhost:8081");
+    const socketClient3 = io(socketServerUrl);
 
     socketClient3.on("connect", () => {
       players.push(new Player(socketClient3.id, "Player 3"));
@@ -183,7 +185,7 @@ describe("Sockets Game Tests", () => {
     socketClient2.emit("playerMove", { positionX: 2, positionY: 2 });
   });
   test("[Client Side] When is game end with draw ", (done) => {
-    const socketClient3 = io("http://localhost:8081");
+    const socketClient3 = io(socketServerUrl);
 
     socketClient3.on("connect", () => {
       players.push(new Player(socketClient3.id, "Player 3"));
@@ -243,7 +245,7 @@ describe("Sockets Game Tests", () => {
   });
 
   test("[Client Side] When is third draw in row but only have 3 players ", (done) => {
-    const socketClient3 = io("http://localhost:8081");
+    const socketClient3 = io(socketServerUrl);
 
     socketClient3.on("connect", () => {
       players.push(new Player(socketClient3.id, "Player 3"));
@@ -279,10 +281,10 @@ describe("Sockets Game Tests", () => {
   });
 
   test("[Client Side] When is third draw in row but only have 4 players or more ", (done) => {
-    const socketClient3 = io("http://localhost:8081");
+    const socketClient3 = io(socketServerUrl);
 
     socketClient3.on("connect", () => {
-      const socketClient4 = io("http://localhost:8081");
+      const socketClient4 = io(socketServerUrl);
       socketClient4.on("connect", () => {
         players.push(new Player(socketClient3.id, "Player 3"));
         players.push(new Player(socketClient4.id, "Player 4"));

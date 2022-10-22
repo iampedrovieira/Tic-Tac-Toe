@@ -3,7 +3,7 @@ import Player from "Types/Player";
 
 export async function connectSocket():Promise<Socket>{
 
-    let socket = io("http://localhost:8080");
+    let socket = io(process.env.NEXT_PUBLIC_SOCKET_SERVER);
   
     const promiseSocketConnection = new Promise<Socket>((resolve, reject) => {
         socket.on("connect", () => {
