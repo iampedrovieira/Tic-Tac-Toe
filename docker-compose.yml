@@ -1,0 +1,25 @@
+version: '3.3'
+
+services:
+
+  db:
+    image: postgres:14.2-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+    ports:
+      - "5432:5432"
+
+  front-end:
+    container_name: front-end
+    image: front-end:1.0
+    restart: always
+    ports:
+      - 3000:3000
+  
+  back-end:
+    container_name: back-end
+    image: backe-end:1.0
+    restart: always
+    ports:
+      - 8080:8080

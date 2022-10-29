@@ -24,12 +24,16 @@
         - [X] Finish page structure without beutifull CSS [Desktop first].
         - [X] Create css to componentes like board buttons.
         - [X] BUGFIX, when player 2 win, on next game style with same 0 on hover
-        
+ * Back-end
+    - [ ] - Create structure db with prisma.
+    - [ ] - Create first connection to DB.
+    - [ ] - Set a limit time to play of 25s per player.    
 * Global
-    - [ ] ENV
-    - [ ] Setup a deploy/dev structure with docker
-        - [ ] Front-end container
-        - [ ] Back-end container
+    - [X] ENV
+    - [X] Setup a deploy/dev structure with docker
+        - [X] Front-end container
+        - [X] Back-end container
+    - [X]Use ENV by docker/docker-compose instead .env file
     - [ ] Create a CI/CD with test
     
 - [ ] (Not important improvements)
@@ -40,13 +44,12 @@
         - [ ] P2 - Create a login.
         - [ ] P2 - In case the user not exist able new input to repeat pwd.
     * Back-end 
-        - [ ] P1 - Create a end poit to validate this token.
+        - [ ] P1 - Create a end point to validate this token.
         - [ ] P1 - Use the validate fuction like middlewere on socket connection to validate.
         - [ ] P2 - Create a end point to validate login.
         - [ ] P2 - Create a end point to register[if exist token transfere wins and losses].
-    
     * Global
-        - [ ] P2 - Create a docker with db.
+        - [X] P2 - Create a docker with db.
         - [ ] P2 - Create a DB structure only with user information.
 
 * Phase 2 [ROOMS]
