@@ -18,7 +18,7 @@
   },
   "scripts": {
     "test": "jest -e --colors -i --verbose --forceExit --coverage",
-    "start": "node ./build/index.js",
+    "start": "node ./dist/index.js",
     "build": "tsc -p .",
     "dev": "nodemon ./src/index.ts"
   },

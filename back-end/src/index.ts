@@ -1,4 +1,3 @@
-import { Socket } from "socket.io";
 import Game from "./Models/Game";
 import Player from "./Models/Player";
 
@@ -10,6 +9,3 @@ let players:Player[] = [];
 let games:Game[]=[];
 let playersCheck:Map<string,boolean> = new Map();
 require('./Modules/SocketListeners')(io,players,games,playersCheck);
-
-
-

@@ -25,7 +25,8 @@
         - [X] Create css to componentes like board buttons.
         - [X] BUGFIX, when player 2 win, on next game style with same 0 on hover
  * Back-end
-    - [ ] - Create structure db with prisma.
+    - [X] - Create structure db with prisma.
+    - [X] - Create simple api structure with middlewares.
     - [ ] - Create first connection to DB.
     - [ ] - Set a limit time to play of 25s per player.    
 * Global
@@ -35,7 +36,9 @@
         - [X] Back-end container
     - [X]Use ENV by docker/docker-compose instead .env file
     - [ ] Create a CI/CD with test
-    
+    - [ ] Improve a db postgres container
+        - [ ] Migrate db with prisma on deploy (at this moment needed run command on docker cli)
+        - [ ] Use volumes and data perseve correctly.
 - [ ] (Not important improvements)
     * Front-end
         - [ ] Login input check if is valid.
