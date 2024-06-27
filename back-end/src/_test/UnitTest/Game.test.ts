@@ -90,7 +90,7 @@ describe('Game Class', () => {
       expect(result.win).toBe(true);
       expect(result.draw).toBe(false);
       expect(result.playerWin).toBe(player1.getId());
-      expect(result.playerWinOpiton).toBe(player1.getOption());
+      expect(result.playerWinOption).toBe(player1.getOption());
       done();
 
     });
@@ -110,7 +110,7 @@ describe('Game Class', () => {
       expect(result.win).toBe(true);
       expect(result.draw).toBe(false);
       expect(result.playerWin).toBe(player1.getId());
-      expect(result.playerWinOpiton).toBe(player1.getOption());
+      expect(result.playerWinOption).toBe(player1.getOption());
       done();
     });
     test('Game Win with Line 3',(done)=>{
@@ -129,7 +129,7 @@ describe('Game Class', () => {
       expect(result.win).toBe(true);
       expect(result.draw).toBe(false);
       expect(result.playerWin).toBe(player1.getId());
-      expect(result.playerWinOpiton).toBe(player1.getOption());
+      expect(result.playerWinOption).toBe(player1.getOption());
       done();
     });
     test('Game Win with Column 1',(done)=>{
@@ -148,7 +148,7 @@ describe('Game Class', () => {
       expect(result.win).toBe(true);
       expect(result.draw).toBe(false);
       expect(result.playerWin).toBe(player1.getId());
-      expect(result.playerWinOpiton).toBe(player1.getOption());
+      expect(result.playerWinOption).toBe(player1.getOption());
       done();
     });
     test('Game Win with Column 2',(done)=>{
@@ -167,7 +167,7 @@ describe('Game Class', () => {
       expect(result.win).toBe(true);
       expect(result.draw).toBe(false);
       expect(result.playerWin).toBe(player1.getId());
-      expect(result.playerWinOpiton).toBe(player1.getOption());
+      expect(result.playerWinOption).toBe(player1.getOption());
       done();
     });
     test('Game Win with Column 3',(done)=>{
@@ -186,7 +186,7 @@ describe('Game Class', () => {
       expect(result.win).toBe(true);
       expect(result.draw).toBe(false);
       expect(result.playerWin).toBe(player1.getId());
-      expect(result.playerWinOpiton).toBe(player1.getOption());
+      expect(result.playerWinOption).toBe(player1.getOption());
       done();
     });
   });

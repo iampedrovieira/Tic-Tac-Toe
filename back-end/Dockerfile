@@ -8,6 +8,8 @@ COPY . /home/app/
 
 RUN npm install
 
+#RUN npm run build
+
 CMD [ "npm", "run","dev" ]
 
 EXPOSE 8080

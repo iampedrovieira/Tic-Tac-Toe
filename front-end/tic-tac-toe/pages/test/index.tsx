@@ -158,7 +158,7 @@ const Home = () => {
     connection();
   },[]);
 
-  //This is run when player is connected to server
+  //This is run when player is connected to server 
   useEffect(() => {
   
     if (!socket) return;
@@ -176,7 +176,7 @@ const Home = () => {
   function handleName(): void {
     if (!name) return;
     if (!socket) return;
-    emitSendPlayerInfo(socket, name);
+    emitSendPlayerInfo(socket, name,'LOBBY');
     setHideNameBox(false);
   }
 

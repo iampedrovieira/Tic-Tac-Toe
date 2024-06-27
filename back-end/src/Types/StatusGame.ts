@@ -1,7 +1,7 @@
 export default interface StatusGame{
     'win':boolean,
     'playerWin':string,
-    'playerWinOpiton':number,
+    'playerWinOption':number,
     'draw':boolean,
     'message':string
 

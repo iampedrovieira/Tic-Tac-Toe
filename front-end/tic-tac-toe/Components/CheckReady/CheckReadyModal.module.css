@@ -13,6 +13,7 @@
     border: 20px solid var(--PRIMARY-COLOR-BLACK);
     border-radius: 50px;
     box-shadow: 24;
+    font-size: x-large;
   }
 
 .input{

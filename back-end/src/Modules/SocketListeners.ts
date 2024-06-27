@@ -1,20 +1,19 @@
-import { Socket } from "socket.io"
-import Game from "../Models/Game";
-import Player from "../Models/Player";
+import { Socket } from "socket.io";
+import { Sequelize } from "sequelize";
 
-module.exports = (io:any,players:Player[],games:Game[],playersCheck:Map<string,boolean>)=>{
-
+module.exports = (io:any,sequelize:Sequelize)=>{
+    
     const onConnection = (socket:Socket) =>{
         // * Put here the Listenters
-      const {onDisconnecting} = require('./Handlers/DisconnectingHandler')(io,socket,players,games);
-      socket.on("disconnecting",onDisconnecting);
+      const {onDisconnecting} = require('./Handlers/DisconnectingHandler')(io,socket,sequelize);
+      socket.on("disconnect",onDisconnecting);
         // * New player join the game
-      const {onNewPlayerJoin,onPlayerCheck,onPlayerUnCheck} = require('./Handlers/ConnectionHandlers')(io,socket,players,games,playersCheck);
+      const {onNewPlayerJoin,onPlayerCheck,onPlayerUnCheck} = require('./Handlers/ConnectionHandlers')(io,socket,sequelize);
       socket.on("newPlayerJoin",onNewPlayerJoin);
       socket.on('playerCheck',onPlayerCheck);
       socket.on('playerUnCheck',onPlayerUnCheck);  
       
-      const {onPlayerMove} = require('./Handlers/GameHandlers')(io,socket,players,games,playersCheck);
+      const {onPlayerMove} = require('./Handlers/GameHandlers')(io,socket,sequelize);
       socket.on("playerMove",onPlayerMove);
 
     }

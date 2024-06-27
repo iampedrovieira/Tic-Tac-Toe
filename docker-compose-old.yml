@@ -1,0 +1,27 @@
+version: '3.3'
+
+services:
+  nginx:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  back-end:
+    container_name: back-end
+    image: back-end:1.0
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      VIRTUAL_HOST: backend.iampedrovieira.pt
+
+  front-end:
+    container_name: front-end
+    image: front-end:1.0
+    restart: always
+    ports:
+      - 3000:3000
+    environment:
+      VIRTUAL_HOST: tictactoe.iampedrovieira.pt

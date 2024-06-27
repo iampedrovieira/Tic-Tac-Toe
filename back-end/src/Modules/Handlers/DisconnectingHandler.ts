@@ -1,66 +1,101 @@
 import { Socket } from "socket.io";
-import { io } from "socket.io-client";
-import Game from "../../Models/Game";
 import Player from "../../Models/Player";
+import RoomModel from "./../../../models/room";
+import UserModel from "../../../models/user";
+import GameModel from "../../../models/game";
+import { Sequelize } from "sequelize";
 
-module.exports = (
-  io: any,
-  socket: Socket,
-  players: Player[],
-  games: Game[]
-) => {
-  const onDisconnecting = function () {
-    var playerPosition: number = 0;
-    let existPlayer = false
-    players.forEach((player) => {
-      if (player.getId() == socket.id) {
-        existPlayer=true;
-        playerPosition = players.indexOf(player);
-        players.splice(players.indexOf(player), 1);
+module.exports = (io: any,socket: Socket,sequelize:Sequelize) => {
+  const onDisconnecting = async function () {
+    console.log("Disconnecting")
+    //Create room on DB
+    const Room = RoomModel(sequelize);
+    const User = UserModel(sequelize);
+    const Game = GameModel(sequelize);
+    //Trougth the socket ID and User object, find the room on DB
+    const userObj = await User.findOne({where :{ SOCKETID : socket.id }});
+    if (!userObj) return;
+    const roomObj = await Room.findOne({where :{ ID: userObj.getRoomID() }});
+    if (!roomObj) return;
+    //Get all players in the room
+    let playersInRoom = await User.findAll({where :{ ROOMID : roomObj.ID }, order: [['ID', 'ASC']]});
+    if (!playersInRoom) return;
+
+    //Get the user position in the playersInRoom
+    let playerPosition = 0;
+    let existPlayer = false;
+
+    playersInRoom.forEach((player) => {
+      if (player.getSocketID() == socket.id) {
+        existPlayer = true;
+        playerPosition = playersInRoom.indexOf(player) + 1;
         return;
       }
     });
-    if(!existPlayer)return;
+    console.log(existPlayer);
+    if (!existPlayer) return;
+    console.log(playerPosition);
+    if (playerPosition > 2){
+      //Delete the player in DB
+      await User.destroy({where: { SOCKETID: socket.id }});
+    }else{
+      //Delete the game in DB
+      await Game.destroy({where: { ROOMID: roomObj.ID }});
+      
+      //Delete the player in DB
+      await User.destroy({where: { SOCKETID: userObj.getSocketID() }});
 
-    // * Verify if the player left was playing
-    if (playerPosition <= 1) {
-      // * Start new game with player[0] and player[1]
-      games.pop();
-      players.map((player) => {
-        player.setOption(-1);
-      });
-      if (players.length >= 2) {
+      playersInRoom = await User.findAll({where :{ ROOMID : roomObj.ID }, order: [['ID', 'ASC']]});
+
         try {
+          
           const gameEndStatus = {
-            playerWin: players[0].getName(),
+            playerWin: playersInRoom[0].getName(),
             isDraw: false,
-            playerWinId: players[0].getId(),
+            playerWinId: playersInRoom[0].getSocketID(),
             playerLossId: "",
-            playerNextIds: [players[0].getId(),players[1].getId()],
-            nextPlayers: [players[0].getName(),players[1].getName()]
+            playerNextIds: [playersInRoom[0].getSocketID(),playersInRoom[1].getSocketID()],
+            nextPlayers: [playersInRoom[0].getName(),playersInRoom[1].getName()]
           };
           
-          io.emit("gameEnd", gameEndStatus);
+          io.to(roomObj.NAME).emit("gameEnd", gameEndStatus);
+          if(playersInRoom.length >= 2){
+            setTimeout(async() => {
+              //Update player 1 and player 2 option to -2 on DB 
+              playersInRoom[0].setOption(-2);
+              playersInRoom[1].setOption(-2);
 
-          setTimeout(() => {
-            if (players.length >= 2) {
-              io.to(players[0].getId()).emit("playerAvailable");
-              io.to(players[1].getId()).emit("playerAvailable");
-            } else {
-              io.emit("waitingPlayer", "Waiting for player");
-            }
-          }, 2500);
+              await playersInRoom[0].save();
+              await playersInRoom[1].save();
+              playersInRoom = await User.findAll({where :{ ROOMID : roomObj.ID }, order: [['ID', 'ASC']]});
+              const players = playersInRoom.map((player) => {
+                const playerObj = new Player(player.SOCKETID, player.NAME);
+                playerObj.setOption(player.OPTION);
+                return playerObj;
+              });
+
+              io.to(roomObj.NAME).emit("onPlayersChange", players);
+              io.to(playersInRoom[0].getSocketID()).emit("playerAvailable");
+              io.to(playersInRoom[1].getSocketID()).emit("playerAvailable");
+            
+            }, 2500);
+          }else{
+            io.emit("waitingPlayer", "Waiting for player");
+          }
+          
         } catch (error) {
           io.emit("waitingPlayer", "Waiting for player");
         }
-      } else {
-        io.emit("waitingPlayer", "Waiting for player");
-      }
     }
-    io.emit("onPlayersChange", players);
 
-    // * Send to all players a list of players on
-    // * Put here the Listenters
+    playersInRoom = await User.findAll({where :{ ROOMID : roomObj.ID }, order: [['ID', 'ASC']]});
+    const players = playersInRoom.map((player) => {
+      const playerObj = new Player(player.SOCKETID, player.NAME);
+      playerObj.setOption(player.OPTION);
+      return playerObj;
+    });
+
+    io.to(roomObj.NAME).emit("onPlayersChange", players);
   };
 
   return { onDisconnecting };

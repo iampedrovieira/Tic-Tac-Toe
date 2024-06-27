@@ -26,7 +26,7 @@ export default class Game {
             return  {
                 'win':false,
                 'playerWin':'',
-                'playerWinOpiton':-1,
+                'playerWinOption':-1,
                 'draw':false,
                 'message':'Not allowed to play'
             };
@@ -37,7 +37,7 @@ export default class Game {
             return  {
                 'win':false,
                 'playerWin':'',
-                'playerWinOpiton':-1,
+                'playerWinOption':-1,
                 'draw':false,
                 'message':'Cannot play here'
             };
@@ -98,7 +98,7 @@ export default class Game {
             return {
                 'win':false,
                 'playerWin':'',
-                'playerWinOpiton':-1,
+                'playerWinOption':-1,
                 'draw':true,
                 'message':''
             }
@@ -108,7 +108,7 @@ export default class Game {
             return {
                 'win':true,
                 'playerWin':playerId,
-                'playerWinOpiton':playerOption,
+                'playerWinOption':playerOption,
                 'draw':false,
                 'message':''
             }
@@ -117,7 +117,7 @@ export default class Game {
         return {
             'win':false,
             'playerWin':'',
-            'playerWinOpiton':-1,
+            'playerWinOption':-1,
             'draw':false,
             'message':''
         }

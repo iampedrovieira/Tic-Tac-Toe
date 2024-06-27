@@ -32,7 +32,7 @@ export default class Board extends Component<
       playerOption = 1
     }
     this.state = {
-      playerId: props.socket.id,
+      playerId: props.socket.id!,
       playerOption:playerOption,
       game: props.game,
       isGameEnd: false,

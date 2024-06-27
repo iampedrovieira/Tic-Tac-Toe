@@ -1,31 +1,35 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import styles from "../styles/Home.module.css";
+import styles from "../../styles/Home.module.css";
 import { Socket } from "socket.io-client";
+import { useRouter } from 'next/router';
 import {
   connectSocket,
   emitSendPlayerInfo,
   onPlayersChange,
   onWaitingPlayer,
-} from "./../libs/socketConnection";
+} from "../../libs/socketConnection";
 import {
   onGameEnd,
   onGameStart,
   onPlayerAvailable,
   onPlayerMove,
-} from "./../libs/SocketGame";
+} from "../../libs/SocketGame";
 
-import PlayerListComponent from "./../Components/PlayersList/PlayerList";
-import BoardComponent from "./../Components/Board/Board";
-import CheckReadyModal from "./../Components/CheckReady/CheckReadyModal";
-import InputNameModal from "./../Components/InputName/InputNameModal";
+import PlayerListComponent from "../../Components/PlayersList/PlayerList";
+import BoardComponent from "../../Components/Board/Board";
+import CheckReadyModal from "../../Components/CheckReady/CheckReadyModal";
+import InputNameModal from "../../Components/InputName/InputNameModal";
 
 import Player from "Types/Player";
 import Game from "Types/Game";
 import Move from "Types/Move";
 
 const Home = () => {
- 
+  const router = useRouter();
+  const {roomName} = router.query;
+  console.log(roomName);
+
   const [socket, setSocket] = useState<Socket>();
   const [playerId, setPlayerId] = useState<String>();
   const [game, setGame] = useState<Game>();
@@ -71,22 +75,22 @@ const Home = () => {
   function handleName(): void {
     if (!name) return;
     if (!socket) return;
-    emitSendPlayerInfo(socket, name,'LOBBY');
+    emitSendPlayerInfo(socket, name, roomName as string);
     setHideNameBox(false);
   }
 
   function handleCheckBox() {
     if (!checkBox) {
       setCheckBox(!checkBox);
-      socket?.emit("playerCheck",'LOBBY');
+      socket?.emit("playerCheck",roomName);
     } else {
       setCheckBox(!checkBox);
-      socket?.emit("playerUnCheck",'LOBBY');
+      socket?.emit("playerUnCheck",roomName);
     }
   }
 
   function handleEmitMove(move:Move){
-    socket!.emit("playerMove", move,'LOBBY');
+    socket!.emit("playerMove", move,roomName);
   }
 
   return (

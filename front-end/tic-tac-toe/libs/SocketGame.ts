@@ -43,7 +43,7 @@ export function onPlayerMove(socket:Socket,setGame:(game:Game)=>void,setMessage:
 
 export function onGameStart(socket:Socket,setMessage:(message:string)=>void,setGame:(game:Game)=>void,setHideCheckReadyBox:(visible:boolean)=>void,setGameEnd:(gameEnde:Boolean)=>void,setTitle:(message:string)=>void,playerId?:String) {
     socket.on("gameStart",(data:Game)=>{
-      
+        console.log(data);
         setHideCheckReadyBox(false);
         setGame(data);
         setGameEnd(false);
@@ -66,7 +66,7 @@ export function onGameStart(socket:Socket,setMessage:(message:string)=>void,setG
 
 export function onGameEnd(socket:Socket,setMessage:(message:string)=>void,setGameEnd:(gameEnde:Boolean)=>void){
 
-  socket.on("gameEnd",(endGameStatus:EndGameStatus)=>{
+  socket.on("gameEnd",(endGameStatus:any)=>{
   
     setGameEnd(true);
     console.log(endGameStatus)
@@ -74,10 +74,10 @@ export function onGameEnd(socket:Socket,setMessage:(message:string)=>void,setGam
       if(endGameStatus.nextPlayers.length==0){
         setMessage('Its a draw. Other game with same players');
       }else{
-        setMessage('Its a draw. Next Players -> '+endGameStatus.nextPlayers[0]+ ' and '+ endGameStatus.nextPlayers[1]);
+        setMessage('Its a draw. Next Players -> '+endGameStatus.nextPlayers[0].NAME+ ' and '+ endGameStatus.nextPlayers[1].NAME);
       }
     }else{
-      setMessage(endGameStatus.playerWin+ ' Win the game. Next Player is '+ endGameStatus.nextPlayers[0]);
+      setMessage(endGameStatus.playerWin + ' Win the game. Nexts Players are '+ endGameStatus.nextPlayers[0].NAME + ' and ' + endGameStatus.nextPlayers[1].NAME);
     }
     
 

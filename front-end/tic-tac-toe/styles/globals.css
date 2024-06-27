@@ -4,8 +4,8 @@ body {
   width: 100%;
   padding: 0;
   margin: 0;
-  font-family: 'Brush Script MT', cursive;
-  font-size:1vw
+  font-family: 'Arial', cursive;
+  font-size:large;
 }
 #div_main {
   height: 100%;
