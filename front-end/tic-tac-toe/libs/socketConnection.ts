@@ -1,3 +1,5 @@
+import PlayerInfo from "Components/PlayerInfo/PlayerInfo";
+import { platform } from "os";
 import { io, Socket } from "socket.io-client";
 import Player from "Types/Player";
 
@@ -23,7 +25,7 @@ export async function connectSocket():Promise<Socket>{
 }
 
 export function emitSendPlayerInfo(socket:Socket,playerName:string,roomName:string):void{
-
+    
     socket.emit("newPlayerJoin",playerName,roomName);
     return;
 }
@@ -38,7 +40,6 @@ export function onWaitingPlayer(socket:Socket,setMessage:(message:string)=>void,
 }
 
 export function onPlayersChange(socket:Socket,setPlayersList:(players:Player[])=>void){
-
     socket.on('onPlayersChange',(players:Player[])=>{
         console.log(players)
         setPlayersList(players);

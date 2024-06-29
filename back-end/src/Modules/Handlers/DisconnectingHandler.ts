@@ -1,24 +1,24 @@
 import { Socket } from "socket.io";
-import Player from "../../Models/Player";
-import RoomModel from "./../../../models/room";
-import UserModel from "../../../models/user";
-import GameModel from "../../../models/game";
+import RoomModel from "../../../Models/Room";
+import UserModel,{User} from "../../../Models/User";
+import GameModel from "../../../Models/Game";
 import { Sequelize } from "sequelize";
 
 module.exports = (io: any,socket: Socket,sequelize:Sequelize) => {
   const onDisconnecting = async function () {
     console.log("Disconnecting")
+    console.log('=====================================================');
     //Create room on DB
-    const Room = RoomModel(sequelize);
-    const User = UserModel(sequelize);
-    const Game = GameModel(sequelize);
+    const room = RoomModel(sequelize);
+    const user = UserModel(sequelize);
+    const game = GameModel(sequelize);
     //Trougth the socket ID and User object, find the room on DB
-    const userObj = await User.findOne({where :{ SOCKETID : socket.id }});
+    const userObj = await user.findOne({where :{ SOCKETID : socket.id }});
     if (!userObj) return;
-    const roomObj = await Room.findOne({where :{ ID: userObj.getRoomID() }});
+    const roomObj = await room.findOne({where :{ ID: userObj.getRoomID() }});
     if (!roomObj) return;
     //Get all players in the room
-    let playersInRoom = await User.findAll({where :{ ROOMID : roomObj.ID }, order: [['ID', 'ASC']]});
+    let playersInRoom = await user.findAll({where :{ ROOMID : roomObj.ID }, order: [['ID', 'ASC']]});
     if (!playersInRoom) return;
 
     //Get the user position in the playersInRoom
@@ -32,20 +32,20 @@ module.exports = (io: any,socket: Socket,sequelize:Sequelize) => {
         return;
       }
     });
-    console.log(existPlayer);
+  
     if (!existPlayer) return;
-    console.log(playerPosition);
+    
     if (playerPosition > 2){
       //Delete the player in DB
-      await User.destroy({where: { SOCKETID: socket.id }});
+      await user.destroy({where: { SOCKETID: socket.id }});
     }else{
       //Delete the game in DB
-      await Game.destroy({where: { ROOMID: roomObj.ID }});
+      await game.destroy({where: { ROOMID: roomObj.ID }});
       
       //Delete the player in DB
-      await User.destroy({where: { SOCKETID: userObj.getSocketID() }});
+      await user.destroy({where: { SOCKETID: userObj.getSocketID() }});
 
-      playersInRoom = await User.findAll({where :{ ROOMID : roomObj.ID }, order: [['ID', 'ASC']]});
+      playersInRoom = await user.findAll({where :{ ROOMID : roomObj.ID }, order: [['ID', 'ASC']]});
 
         try {
           
@@ -67,14 +67,10 @@ module.exports = (io: any,socket: Socket,sequelize:Sequelize) => {
 
               await playersInRoom[0].save();
               await playersInRoom[1].save();
-              playersInRoom = await User.findAll({where :{ ROOMID : roomObj.ID }, order: [['ID', 'ASC']]});
-              const players = playersInRoom.map((player) => {
-                const playerObj = new Player(player.SOCKETID, player.NAME);
-                playerObj.setOption(player.OPTION);
-                return playerObj;
-              });
+              playersInRoom = await user.findAll({ where: { ROOMID: roomObj?.ID }, order: [['ID', 'ASC']]});
+              const playersOutput = playersInRoom.map((player: User) => {return player.getUserOutput()});
 
-              io.to(roomObj.NAME).emit("onPlayersChange", players);
+              io.to(roomObj.NAME).emit("onPlayersChange", playersOutput);
               io.to(playersInRoom[0].getSocketID()).emit("playerAvailable");
               io.to(playersInRoom[1].getSocketID()).emit("playerAvailable");
             
@@ -88,14 +84,12 @@ module.exports = (io: any,socket: Socket,sequelize:Sequelize) => {
         }
     }
 
-    playersInRoom = await User.findAll({where :{ ROOMID : roomObj.ID }, order: [['ID', 'ASC']]});
-    const players = playersInRoom.map((player) => {
-      const playerObj = new Player(player.SOCKETID, player.NAME);
-      playerObj.setOption(player.OPTION);
-      return playerObj;
-    });
+    playersInRoom = await user.findAll({ where: { ROOMID: roomObj?.ID }, order: [['ID', 'ASC']]});
+    const playersOutput = playersInRoom.map((player: User) => {return player.getUserOutput()});
 
-    io.to(roomObj.NAME).emit("onPlayersChange", players);
+    io.to(roomObj.NAME).emit("onPlayersChange", playersOutput);
+
+    io.to(roomObj.NAME).emit("onPlayersChange", playersOutput);
   };
 
   return { onDisconnecting };

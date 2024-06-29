@@ -27,7 +27,7 @@
  * Back-end
     - [X] - Create structure db with prisma.
     - [X] - Create simple api structure with middlewares.
-    - [ ] - Create first connection to DB.
+    - [X] - Create first connection to DB.
     - [ ] - Set a limit time to play of 25s per player.    
 * Global
     - [X] ENV
@@ -53,6 +53,25 @@
         - [ ] P2 - Create a end point to register[if exist token transfere wins and losses].
     * Global
         - [X] P2 - Create a docker with db.
-        - [ ] P2 - Create a DB structure only with user information.
+        - [x] P2 - Create a DB structure only with user information.
 
 * Phase 2 [ROOMS]
+    * Global
+        - [X] Clean code on Connecting Handlers
+            -[X] onNewPlayerJoin
+            -[X] onUncheck
+            -[X] onCheck
+        - [X] Clean code on disconnecting Handlers
+        - [X] Clean code Models
+            - [X] User
+            - [X] Room
+            - [X] Game
+        - [X] Remove old Models
+        - [] New Feature(No 'Draw' game)
+            - [] Add new column on Game (next position to remove)
+            - [] Send the first postion when player have 4/3 on board
+            - [] Send this column to Front-end
+            - [] On Fron-end put the postion blinking
+            - [] On Back-end after send the move put the new postion and remove the new column
+            
+        - [] P2 - Create a DB structure only with user information.
