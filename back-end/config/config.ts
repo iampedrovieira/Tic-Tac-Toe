@@ -2,9 +2,9 @@ import { SequelizeOptions } from 'sequelize-typescript';
 
 const config: { [key: string]: SequelizeOptions } = {
   development: {
-    username: process.env.DB_USERNAME  ,
-    password: process.env.DB_PASSWORD  ,
-    database: process.env.DB_NAME ,
+    username: process.env.DB_USERNAME || 'osvaldinho',
+    password: process.env.DB_PASSWORD || 'tgarciaw',
+    database: process.env.DB_NAME || 'tictactoe-aws',
     host: process.env.DB_HOST || '172.17.0.1',
     dialect: 'postgres',
   },

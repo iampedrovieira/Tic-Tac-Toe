@@ -41,6 +41,7 @@ const Home = () => {
 
   // Socket server connection
   useEffect(() => {
+    alert("Welcome to a Unique Tic-Tac-Toe Experience!\n\nThis isn't your ordinary tic-tac-toe. Here's what makes our game special:\n\n- Limited Moves: You can only use 3 positions on the board. If you play a fourth move, your first move will be automatically removed. Keep track of your opponent's moves as well!\n\n- Player Limit: Only the first 2 players to join can play the game. Anyone else who joins will be a spectator. So, get in quick!\n\n- Creating a New Room: Want to start your own game? Simply navigate to /room/roomname in your browser. For example, https://tictactoe.iampedrovieira.pt/room/test. Share the link with your opponent to start playing against each other.\n\nEnjoy the game, and may the best player win!");
     async function connection() {
       try{
         const socketClient = await connectSocket();

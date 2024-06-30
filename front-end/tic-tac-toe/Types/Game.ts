@@ -5,4 +5,5 @@ export default interface Game {
     player2?: Player;
     playerAllowed?: string;
     gameState: number[][];
+    positionRemove?: number[];
   }

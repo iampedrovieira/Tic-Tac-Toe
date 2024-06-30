@@ -7,16 +7,20 @@ import { publicDecrypt } from "crypto";
 interface GameAttributes {
   ID: number;
   GAMESTATE:number[][];
+  PLAYSHISTORIC:number[][];
+  POSTIONREMOVE:number[];
   PLAYER1:string;
   PLAYER2:string;
   PLAYERALLOWED:string;
   DRAWS:number;
   ROOMID:number;
 }
-interface GameCreationAttributes extends Optional<GameAttributes, 'ID'|'GAMESTATE'> {}
+interface GameCreationAttributes extends Optional<GameAttributes, 'ID'|'GAMESTATE'|'PLAYSHISTORIC'|'POSTIONREMOVE'> {}
 export class Game extends Model<GameAttributes, GameCreationAttributes> implements GameAttributes {
   public ID!: number;
   public GAMESTATE!: number[][];
+  public PLAYSHISTORIC!: number[][];
+  public POSTIONREMOVE!: number[];
   public PLAYER1!: string;
   public PLAYER2!: string;
   public PLAYERALLOWED!: string;
@@ -38,6 +42,7 @@ export class Game extends Model<GameAttributes, GameCreationAttributes> implemen
       player1: player1Obj?.getUserOutput(),
       player2: player2Obj?.getUserOutput(),
       playerAllowed: this.PLAYERALLOWED,
+      positionRemove:this.POSTIONREMOVE,
       draws: this.DRAWS
     }
   }
@@ -67,6 +72,7 @@ export class Game extends Model<GameAttributes, GameCreationAttributes> implemen
     }
 
     let playerOption: number = -1;
+    
     if (this.PLAYER1 == playerId) {
       playerOption = 0; // Assuming option 0 for player1
       this.GAMESTATE[playerMove.positionX][playerMove.positionY] = playerOption;
@@ -76,6 +82,21 @@ export class Game extends Model<GameAttributes, GameCreationAttributes> implemen
       this.GAMESTATE[playerMove.positionX][playerMove.positionY] = playerOption;
       this.PLAYERALLOWED = this.PLAYER1;
     }
+    
+    this.PLAYSHISTORIC.push([playerMove.positionX,playerMove.positionY]);
+
+    //After player play
+    if(this.POSTIONREMOVE.length > 0){
+      this.GAMESTATE[this.POSTIONREMOVE[0]][this.POSTIONREMOVE[1]] = -1;
+      this.POSTIONREMOVE = []
+    }
+
+    //Before next player play
+    if(this.PLAYSHISTORIC.length === 6){
+      this.POSTIONREMOVE = this.PLAYSHISTORIC.shift()!;
+    }
+
+    
 
     let winOption: number = -1;
 
@@ -112,9 +133,13 @@ export class Game extends Model<GameAttributes, GameCreationAttributes> implemen
       }
       if (!isDraw) break;
     }
-
+    //New feature logic (first in firt out)
+    
+    
     // Explicitly set the gameState to ensure Sequelize recognizes the change
     this.changed('GAMESTATE',true)
+    this.changed('PLAYSHISTORIC',true)
+    this.changed('POSTIONREMOVE',true)
 
     if (isDraw) {
       return {
@@ -147,8 +172,13 @@ export class Game extends Model<GameAttributes, GameCreationAttributes> implemen
 
   public restart() {
     this.GAMESTATE = [[-1, -1, -1], [-1, -1, -1], [-1, -1, -1]];
+    this.PLAYSHISTORIC = [];
+    this.POSTIONREMOVE = [];
     // Explicitly set the gameState to ensure Sequelize recognizes the change
     this.changed('GAMESTATE',true)
+    this.changed('GAMESTATE',true)
+    this.changed('PLAYSHISTORIC',true)
+    this.changed('POSTIONREMOVE',true)
   }
 
   //Create setters and getters
@@ -203,6 +233,16 @@ function GameModel(sequelize: Sequelize) {
         type: DataTypes.JSONB, // Store game state as JSON
         allowNull: false,
         defaultValue: [[-1, -1, -1], [-1, -1, -1], [-1, -1, -1]],
+      },
+      PLAYSHISTORIC: {
+        type: DataTypes.JSONB, // Store game state as JSON
+        allowNull: false,
+        defaultValue: [],
+      },
+      POSTIONREMOVE: {
+        type: DataTypes.JSONB, // Store game state as JSON
+        allowNull: false,
+        defaultValue: [],
       },
       PLAYER1: {
         type: DataTypes.STRING,

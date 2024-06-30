@@ -35,9 +35,9 @@ services:
     image: postgres
     container_name: tictactoe-postgres-db-deply
     environment:
-      POSTGRES_DB: tictactoe
-      POSTGRES_USER: test
-      POSTGRES_PASSWORD: test
+      POSTGRES_DB: tictactoe-aws
+      POSTGRES_USER: osvaldinho
+      POSTGRES_PASSWORD: tgarciaw
     ports:
       - "5432:5432"
     restart: always

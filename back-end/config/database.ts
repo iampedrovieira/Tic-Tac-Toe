@@ -2,9 +2,10 @@
 
 import { Sequelize } from 'sequelize-typescript';
 import config from './config';
-
+// Import your models
+import UserModel from '../Models/User';
 import RoomModel from '../Models/Room';
-
+import GameModel from '../Models/Game';
 
 export async function initSequelizeDatabase(){
     const env = process.env.NODE_ENV || 'development';
@@ -12,7 +13,9 @@ export async function initSequelizeDatabase(){
     
     const sequelize = new Sequelize(sequelizeConfig);
     
+    const User = UserModel(sequelize);
     const Room = RoomModel(sequelize);
+    const Game = GameModel(sequelize);
     
     //This is to sync sequielize modes to db (only in dev mode)
     await sequelize.sync({ force: true }); // Set to `true` to drop and recreate tables

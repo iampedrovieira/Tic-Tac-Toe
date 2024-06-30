@@ -24,6 +24,7 @@ export function onPlayerMove(socket:Socket,setGame:(game:Game)=>void,setMessage:
       player2: gameState.player2,
       playerAllowed: gameState.playerAllowed,
       gameState: gameState.gameState,
+      positionRemove: gameState.positionRemove,
     };
     setGame(newGameState);
     

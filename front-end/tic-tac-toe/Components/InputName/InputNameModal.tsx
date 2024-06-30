@@ -10,7 +10,7 @@ interface propsInput {
   'onHandleName':() =>void,
 
 }
-export default class CheckReadyModal extends 
+export default class DialogInfo extends 
   React.Component<propsInput> {
 
   constructor(props: propsInput | Readonly<propsInput>){

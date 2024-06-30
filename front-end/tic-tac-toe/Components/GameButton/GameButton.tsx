@@ -6,7 +6,8 @@ interface propsInput {
   isDisable:boolean,
   playerOption:number,
   option:number,
-  event:Function
+  event:Function,
+  toRemove:boolean
 }
 
 interface buttonState {
@@ -33,14 +34,20 @@ export default class GameButton extends
 
   UNSAFE_componentWillReceiveProps(_newProps: propsInput){
     let style:string
-    
+ 
+  console.log(_newProps)
     if(_newProps.option == 0){
-      style = styles.player1
-       
+
+      if(_newProps.toRemove){
+        style = styles.player1anim
+      }else{style = styles.player1}
+    
     }else{
-      
+       
       if(_newProps.option == 1){
-        style = styles.player2
+        if(_newProps.toRemove){
+          style = styles.player2anim
+        }else{style = styles.player2}
       }else{
         style = styles.button;
       }
@@ -54,7 +61,9 @@ export default class GameButton extends
       style:style,
       event: this.state.event
     }
+  
     this.setState(newState);
+  
   }
 
   render(){
@@ -74,7 +83,7 @@ export default class GameButton extends
               event: this.state.event
             }
           }else{
-            alert('asdasd')
+           
             newState = {
               isDisable : this.state.isDisable,
               option:this.state.option,
@@ -116,23 +125,23 @@ export default class GameButton extends
         this.setState(newState)
       }
     }
-      let onMouseOut = () =>{
+    let onMouseOut = () =>{
 
-        if(!this.state.isDisable && this.state.option == -1){
-        
-          let newState = {
-            isDisable : this.state.isDisable,
-            option:this.state.option,
-            playerOption:this.state.playerOption,
-            style:styles.button,
-            event: this.state.event
-          }
-          this.setState(newState)
+      if(!this.state.isDisable && this.state.option == -1){
+      
+        let newState = {
+          isDisable : this.state.isDisable,
+          option:this.state.option,
+          playerOption:this.state.playerOption,
+          style:styles.button,
+          event: this.state.event
         }
+        this.setState(newState)
+      }
     }
 
     return (
-      <div className={this.state.style} 
+      <div className={this.state.style } 
         onClick={handleButton} 
         onMouseOver={onMouseOver} 
         onMouseOut={onMouseOut}  >

@@ -68,10 +68,10 @@
             - [X] Game
         - [X] Remove old Models
         - [] New Feature(No 'Draw' game)
-            - [] Add new column on Game (next position to remove)
-            - [] Send the first postion when player have 4/3 on board
-            - [] Send this column to Front-end
-            - [] On Fron-end put the postion blinking
-            - [] On Back-end after send the move put the new postion and remove the new column
+            - [X] Add new column on Game (next position to remove)
+            - [X] Send the first postion when player have 6 plays on board
+            - [X] Send this column to Front-end
+            - [X] On Fron-end put the postion blinking
+            - [X] On Back-end after send the move put the new postion and remove the new column
             
         - [] P2 - Create a DB structure only with user information.

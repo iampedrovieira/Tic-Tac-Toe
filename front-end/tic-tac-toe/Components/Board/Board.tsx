@@ -41,19 +41,19 @@ export default class Board extends Component<
       handleEmitMove: props.handleEmitMove,
       buttonsState: [
         [
-          { styles: styles.button, disable: true },
-          { styles: styles.button, disable: true },
-          { styles: styles.button, disable: true },
+          { styles: styles.button, disable: true, toRemove: false },
+          { styles: styles.button, disable: true, toRemove: false },
+          { styles: styles.button, disable: true, toRemove: false },
         ],
         [
-          { styles: styles.button, disable: true },
-          { styles: styles.button, disable: true },
-          { styles: styles.button, disable: true },
+          { styles: styles.button, disable: true, toRemove: false },
+          { styles: styles.button, disable: true, toRemove: false },
+          { styles: styles.button, disable: true, toRemove: false },
         ],
         [
-          { styles: styles.button, disable: true },
-          { styles: styles.button, disable: true },
-          { styles: styles.button, disable: true },
+          { styles: styles.button, disable: true, toRemove: false },
+          { styles: styles.button, disable: true, toRemove: false },
+          { styles: styles.button, disable: true, toRemove: false },
         ],
       ],
     };
@@ -66,19 +66,19 @@ export default class Board extends Component<
       this.setState({
         buttonsState: [
           [
-            { styles: this.state.buttonsState[0][0].styles, disable: true },
-            { styles: this.state.buttonsState[0][1].styles, disable: true },
-            { styles: this.state.buttonsState[0][2].styles, disable: true },
+            { styles: this.state.buttonsState[0][0].styles, disable: true, toRemove: false },
+            { styles: this.state.buttonsState[0][1].styles, disable: true, toRemove: false },
+            { styles: this.state.buttonsState[0][2].styles, disable: true, toRemove: false },
           ],
           [
-            { styles: this.state.buttonsState[1][0].styles, disable: true },
-            { styles: this.state.buttonsState[1][1].styles, disable: true },
-            { styles: this.state.buttonsState[1][2].styles, disable: true },
+            { styles: this.state.buttonsState[1][0].styles, disable: true, toRemove: false },
+            { styles: this.state.buttonsState[1][1].styles, disable: true, toRemove: false },
+            { styles: this.state.buttonsState[1][2].styles, disable: true, toRemove: false },
           ],
           [
-            { styles: this.state.buttonsState[2][0].styles, disable: true },
-            { styles: this.state.buttonsState[2][1].styles, disable: true },
-            { styles: this.state.buttonsState[2][2].styles, disable: true },
+            { styles: this.state.buttonsState[2][0].styles, disable: true, toRemove: false},
+            { styles: this.state.buttonsState[2][1].styles, disable: true, toRemove: false },
+            { styles: this.state.buttonsState[2][2].styles, disable: true, toRemove: false},
           ],
         ],
       });
@@ -99,6 +99,7 @@ export default class Board extends Component<
 
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
+          newButtonState[i][j].toRemove = false;
           if (_newProps.game.gameState[i][j] == 0) {
             newButtonState[i][j].disable = true;
           }
@@ -111,6 +112,13 @@ export default class Board extends Component<
           }
         }
       }
+      
+      if(_newProps.game.positionRemove && _newProps.game.positionRemove.length > 0){
+        
+        newButtonState[_newProps.game.positionRemove[0]][_newProps.game.positionRemove[1]].toRemove = true
+       
+      }
+      
       this.setState({ game: _newProps.game });
     }
   }
@@ -146,16 +154,19 @@ export default class Board extends Component<
             event={() => handleButton(0, 0)}
             playerOption={this.state.playerOption}
             option={this.state.game.gameState[0][0]}
+            toRemove={this.state.buttonsState[0][0].toRemove}
           />
          <GameButton isDisable={this.state.buttonsState[0][1].disable}
             event={() => handleButton(0, 1)}
             playerOption={this.state.playerOption}
             option={this.state.game.gameState[0][1]}
+            toRemove={this.state.buttonsState[0][1].toRemove}
           />
          <GameButton isDisable={this.state.buttonsState[0][2].disable}
             event={() => handleButton(0, 2)}
             playerOption={this.state.playerOption}
             option={this.state.game.gameState[0][2]}
+            toRemove={this.state.buttonsState[0][2].toRemove}
           />
         </div>
         <div className={styles.line}>
@@ -163,16 +174,19 @@ export default class Board extends Component<
             event={() => handleButton(1, 0)}
             playerOption={this.state.playerOption}
             option={this.state.game.gameState[1][0]}
+            toRemove={this.state.buttonsState[1][0].toRemove}
           />
          <GameButton isDisable={this.state.buttonsState[1][1].disable}
             event={() => handleButton(1, 1)}
             playerOption={this.state.playerOption}
             option={this.state.game.gameState[1][1]}
+            toRemove={this.state.buttonsState[1][1].toRemove}
           />
          <GameButton isDisable={this.state.buttonsState[1][2].disable}
             event={() => handleButton(1, 2)}
             playerOption={this.state.playerOption}
             option={this.state.game.gameState[1][2]}
+            toRemove={this.state.buttonsState[1][2].toRemove}
           />
         </div>
         <div className={styles.line}>
@@ -180,16 +194,19 @@ export default class Board extends Component<
             event={() => handleButton(2, 0)}
             playerOption={this.state.playerOption}
             option={this.state.game.gameState[2][0]}
+            toRemove={this.state.buttonsState[2][0].toRemove}
           />
          <GameButton isDisable={this.state.buttonsState[2][1].disable}
             event={() => handleButton(2, 1)}
             playerOption={this.state.playerOption}
             option={this.state.game.gameState[2][1]}
+            toRemove={this.state.buttonsState[2][1].toRemove}
           />
          <GameButton isDisable={this.state.buttonsState[2][2].disable}
             event={() => handleButton(2, 2)}
             playerOption={this.state.playerOption}
             option={this.state.game.gameState[2][2]}
+            toRemove={this.state.buttonsState[2][2].toRemove}
           />
         </div>
       </div>

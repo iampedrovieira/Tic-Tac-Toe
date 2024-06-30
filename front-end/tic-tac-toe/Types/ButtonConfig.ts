@@ -1,4 +1,5 @@
 export default interface ButtonConfig{
     'styles':string,
-    'disable':boolean
+    'disable':boolean,
+    'toRemove':boolean
 }
