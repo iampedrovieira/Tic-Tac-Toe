@@ -4,9 +4,9 @@ FROM alpine:latest
 RUN  apk update && apk add
 RUN apk add --no-cache bash
 
-WORKDIR /home/app
+WORKDIR /app
 
-RUN cd /home/app
+RUN cd /app
 
 # git 
 #RUN apk add git
@@ -19,3 +19,5 @@ RUN apk add --update nodejs npm
 
 EXPOSE 3000
 EXPOSE 8080
+
+CMD ["tail", "-f", "/dev/null"]

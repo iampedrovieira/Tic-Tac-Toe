@@ -6,7 +6,12 @@ interface UserAttributes {
   NAME: string;
   SOCKETID: string;
   OPTION:number; // -1 initial, -2 not checked, -3 checked, 0 and 1 game option
+  //WINS?:number;
+  //LOSSES?:number;
   ROOMID?:number;
+  //EMAIL?: string;
+  //GOOGLEID?: string;
+
 }
 
 

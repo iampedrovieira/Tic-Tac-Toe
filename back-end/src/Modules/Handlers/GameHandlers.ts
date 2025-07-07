@@ -3,9 +3,9 @@ import { Socket } from "socket.io";
 import Move from "../../Types/Move"
 import StatusGame from "../../Types/StatusGame";
 import { Sequelize } from "sequelize";
-import RoomModel from "../../../Models/Room";
-import UserModel,{User} from "../../../Models/User";
-import GameModel from "../../../Models/Game";
+import RoomModel from "../../../models/Room";
+import UserModel,{User} from "../../../models/User";
+import GameModel from "../../../models/Game";
 
 module.exports = (io:any,socket:Socket,sequelize:Sequelize)=>{
 

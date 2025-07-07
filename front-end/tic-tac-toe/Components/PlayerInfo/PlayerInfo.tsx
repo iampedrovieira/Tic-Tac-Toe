@@ -45,7 +45,7 @@ export default class PlayerInfo extends Component<{ player: Player }, State> {
           <div className={styles.name}>
             <h4> {this.props.player.name}</h4>
           </div>
-          <span className={this.state.styleOption}></span>
+          <span className={`${this.state.styleOption} ${styles.option}`}></span>
         </div>
         <div className={styles.separator}></div>
       </div>

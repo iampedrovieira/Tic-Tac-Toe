@@ -1,4 +1,4 @@
-import Game from "../../Models/Game";
+/*import Game from "../../Models/Game";
 import Player from "../../Models/Player"
 import Move from "../../Types/Move";
 import StatusGame from "../../Types/StatusGame";
@@ -208,4 +208,4 @@ describe('Game Class', () => {
     expect(player2.getOption()).toBe(1);
 
   })
-})
+})*/

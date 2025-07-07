@@ -3,9 +3,9 @@
 import { Sequelize } from 'sequelize-typescript';
 import config from './config';
 // Import your models
-import UserModel from '../Models/User';
-import RoomModel from '../Models/Room';
-import GameModel from '../Models/Game';
+import UserModel from '../models/User';
+import RoomModel from '../models/Room';
+import GameModel from '../models/Game';
 
 export async function initSequelizeDatabase(){
     const env = process.env.NODE_ENV || 'development';

@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
-import RoomModel from "../../../Models/Room";
-import UserModel, { User } from "../../../Models/User";
-import GameModel from "../../../Models/Game";
+import RoomModel from "../../../models/Room";
+import UserModel, { User } from "../../../models/User";
+import GameModel from "../../../models/Game";
 import { Sequelize } from "sequelize";
 
 

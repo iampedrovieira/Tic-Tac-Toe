@@ -1,0 +1,64 @@
+services:
+  backend:
+    build:
+      #context: ./back-end
+      dockerfile: ./Docker-DEV/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - tictactoe-postgres-db-deply 
+    networks:
+      - app_network
+    volumes:
+      # Volume para hot reload no backend
+      - ./back-end:/app
+      - /app/node_modules
+    environment:
+      # Variáveis para conectar à base de dados
+      - DB_HOST=tictactoe-postgres-db-deply
+      - DB_NAME=tictactoe-aws
+      - DB_USERNAME=osvaldinho
+      - DB_PASSWORD=tgarciaw
+      - DB_PORT=5432
+
+  frontend:
+    build:
+      #context: ./front-end/tic-tac-toe
+      dockerfile: ./Docker-DEV/Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - app_network
+    depends_on:
+      - backend
+    volumes:
+      # Volume para hot reload no frontend
+      - ./front-end/tic-tac-toe:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      # Para o frontend conectar ao backend local
+      - NEXT_PUBLIC_SOCKET_SERVER=http://localhost:8080
+  
+  tictactoe-postgres-db-deply:
+    image: postgres:15
+    container_name: tictactoe-postgres-db-deply
+    environment:
+      POSTGRES_DB: tictactoe-aws
+      POSTGRES_USER: osvaldinho
+      POSTGRES_PASSWORD: tgarciaw
+    ports:
+      - "5432:5432"
+    restart: always
+    networks:
+      - app_network
+    volumes:
+      # Persistir dados da base de dados
+      - postgres_data:/var/lib/postgresql/data
+  
+volumes:
+  postgres_data:
+
+networks:
+  app_network:
+    driver: bridge

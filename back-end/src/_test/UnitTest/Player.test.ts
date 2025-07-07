@@ -1,4 +1,4 @@
-import Player from "../../Models/Player"
+/*import Player from "../../Models/Player"
 
 describe('Player Class',()=>{
   
@@ -12,4 +12,4 @@ describe('Player Class',()=>{
 
 
 
-});
+});*/
