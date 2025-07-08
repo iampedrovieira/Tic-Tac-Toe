@@ -1,3 +1,6 @@
 [submodule "Backend"]
 	path = Backend
 	url = https://github.com/iampedrovieira/Tic-Tac-Toe-backend.git
+[submodule "Frontend"]
+	path = Frontend
+	url = https://github.com/iampedrovieira/Tic-Tac-Toe-frontend.git

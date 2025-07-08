@@ -11,7 +11,7 @@ services:
       - app_network
     volumes:
       # Volume para hot reload no backend
-      - ./back-end:/app
+      - ./Backend:/app
       - /app/node_modules
     environment:
       # Variáveis para conectar à base de dados
@@ -33,7 +33,7 @@ services:
       - backend
     volumes:
       # Volume para hot reload no frontend
-      - ./front-end/tic-tac-toe:/app
+      - ./Frontend/tic-tac-toe:/app
       - /app/node_modules
       - /app/.next
     environment:
